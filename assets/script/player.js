@@ -3,7 +3,7 @@ cc.Class({
 
     properties: {
         player: cc.Node,
-        speed:250,
+        speed: 250,
         _time: 0,
         _range: cc.p(0, 0),
         _acc: cc.p(0, 0)
@@ -33,9 +33,9 @@ cc.Class({
     update: function (dt) {
         var player = this.player, range = this._range;
         this._time += 5;
-        player.x += this._acc.x * dt * (this.speed + this._time);
+        var playerMove = this._acc.x * dt * (this.speed + this._time);
+        player.x += playerMove;
         player.x = cc.clampf(player.x, -range.x, range.x);
-
         if (player.x <= -range.x || player.x >= range.x) {
             this._time = 0;
         }
