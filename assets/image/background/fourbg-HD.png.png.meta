@@ -1,0 +1,30 @@
+{
+  "ver": "1.0.0",
+  "uuid": "a4612e5e-99be-4296-b4c8-50ac8ecfd1c7",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "subMetas": {
+    "fourbg-HD.png": {
+      "ver": "1.0.3",
+      "uuid": "cb70640c-e761-4164-b670-f37f1bb60a3b",
+      "rawTextureUuid": "a4612e5e-99be-4296-b4c8-50ac8ecfd1c7",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 960,
+      "height": 640,
+      "rawWidth": 960,
+      "rawHeight": 640,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
