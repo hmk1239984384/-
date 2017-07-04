@@ -11,17 +11,17 @@ cc.Class({
     },
 
     playLoadingAnim: function () {
-        console.log(this.node.name);
+        // console.log(this.node.name);
         this.loadingAnim.play();
-        this.schedule(this.changeScene,1);
+        this.schedule(this.changeScene, 1);
     },
 
-    changeScene:function(){
-       if(this.node.name == "play"){
-           cc.director.loadScene("game");
-       }else if(this.node.name == "help"){
-           cc.director.loadScene("help");
-       }
+    changeScene: function () {
+        if (this.node.name == "play") {
+            cc.director.loadScene("game");
+        } else if (this.node.name == "help") {
+            cc.director.loadScene("help");
+        }
     }
 
     // called every frame, uncomment this function to activate update callback

@@ -66,7 +66,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 8
+        "__id__": 9
       }
     ],
     "_prefab": null,
@@ -200,6 +200,9 @@
       },
       {
         "__id__": 7
+      },
+      {
+        "__id__": 8
       }
     ],
     "_prefab": null,
@@ -288,6 +291,25 @@
       "x": 0,
       "y": 0
     }
+  },
+  {
+    "__type__": "cc.Animation",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 5
+    },
+    "_enabled": true,
+    "_defaultClip": null,
+    "_clips": [
+      {
+        "__uuid__": "e3c4e768-adf8-475c-9782-708117949b9c"
+      },
+      {
+        "__uuid__": "dd8f6edc-b351-44c6-9fe9-cdb14a3190be"
+      }
+    ],
+    "playOnLoad": true
   },
   {
     "__type__": "cc.Canvas",
