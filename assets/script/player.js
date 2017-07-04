@@ -52,7 +52,6 @@ cc.Class({
     playAnimByName: function (name) {
         // 通过判断是否更改动画
         if (this.lastAnimName != name) {
-            console.log(name);
             this.playerAnim.stop();
             this.playerAnim.play(name);
             this.lastAnimName = name;

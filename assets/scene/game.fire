@@ -68,17 +68,17 @@
         "__id__": 11
       },
       {
-        "__id__": 13
+        "__id__": 14
       }
     ],
     "_tag": -1,
     "_active": true,
     "_components": [
       {
-        "__id__": 15
+        "__id__": 16
       },
       {
-        "__id__": 16
+        "__id__": 17
       }
     ],
     "_prefab": null,
@@ -414,6 +414,9 @@
     "_components": [
       {
         "__id__": 12
+      },
+      {
+        "__id__": 13
       }
     ],
     "_prefab": null,
@@ -480,6 +483,22 @@
     "_atlas": null
   },
   {
+    "__type__": "cc.Animation",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 11
+    },
+    "_enabled": true,
+    "_defaultClip": null,
+    "_clips": [
+      {
+        "__uuid__": "409e705f-a350-41d0-bbf2-e786ad9267cb"
+      }
+    ],
+    "playOnLoad": false
+  },
+  {
     "__type__": "cc.Node",
     "_name": "redApple",
     "_objFlags": 0,
@@ -491,7 +510,7 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 14
+        "__id__": 15
       }
     ],
     "_prefab": null,
@@ -522,7 +541,7 @@
     "_position": {
       "__type__": "cc.Vec2",
       "x": -157,
-      "y": 367
+      "y": 371
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -536,7 +555,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 13
+      "__id__": 14
     },
     "_enabled": true,
     "_spriteFrame": {
@@ -585,7 +604,7 @@
       "__id__": 11
     },
     "apple": {
-      "__id__": 13
+      "__id__": 14
     }
   }
 ]
