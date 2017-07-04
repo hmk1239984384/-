@@ -9,7 +9,9 @@ cc.Class({
     // use this for initialization
     onLoad: function () {
         this.monkey.x = cc.random0To1() * 610 - 180;
+        this.monkey.y = 450;
         this.apple.x = this.monkey.x + 20;
+        this.apple.y = this.monkey.y - 80;
         this.monkeyAction();
         this.appleAction();
     },
