@@ -22,6 +22,8 @@ cc.Class({
 
         var manager = cc.director.getCollisionManager();
         manager.enabled = true;
+
+        window.redAppleCount = 0;
     },
 
     onDestroy: function () {
@@ -63,10 +65,11 @@ cc.Class({
 
     onCollisionEnter: function (other, self) {
         // tag 1 为向右的碰撞 tag 2 为向左的碰撞
-        if (this.playerMove > 0 && self.tag == 1) {
+        if ((this.playerMove > 0 && self.tag == 1) || (this.playerMove <= 0 && self.tag == 2)) {
             console.log(other.node.name);
-        } else if (this.playerMove <= 0 && self.tag == 2) {
-            console.log(other.node.name);
+            other.node.destroy();
+            window.redAppleCount += 1;
         }
-    }
+    },
+
 });
