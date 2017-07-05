@@ -63,10 +63,10 @@ cc.Class({
 
     onCollisionEnter: function (other, self) {
         // tag 1 为向右的碰撞 tag 2 为向左的碰撞
-        if(this.playerMove > 0 && self.tag == 1){
-            console.log("collision Right");
-        } else if(this.playerMove <= 0 && self.tag == 2){
-            console.log("collision Left");
+        if (this.playerMove > 0 && self.tag == 1) {
+            console.log(other.node.name);
+        } else if (this.playerMove <= 0 && self.tag == 2) {
+            console.log(other.node.name);
         }
     }
 });
