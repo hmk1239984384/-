@@ -3,10 +3,12 @@ cc.Class({
 
     properties: {
         monkey: cc.Node,
-        apple: cc.Prefab,
+        applePrefab: cc.Prefab,
+        appleImg: [cc.SpriteFrame],
         monkeyImg: [cc.SpriteFrame],
         gainApple: cc.Node,
         pauseButton: cc.Node,
+        player: cc.Node,
     },
 
     // use this for initialization
@@ -15,6 +17,11 @@ cc.Class({
         this.dropApple();
         this.schedule(this.dropApple, 3);
         this.lastMonkeyPosition = null;
+    },
+
+    dropApple: function () {
+        this.monkeyAction();
+        this.appleAction();
     },
 
     monkeyAction: function () {
@@ -36,8 +43,10 @@ cc.Class({
     },
 
     appleAction: function () {
-        var apple = cc.instantiate(this.apple);
+        var apple = cc.instantiate(this.applePrefab);
+        apple.name = "redApple";
         this.node.addChild(apple);
+        console.log(apple)
         apple.setPosition(this.lastMonkeyPosition.x + 20, this.lastMonkeyPosition.y - 90);
         var down = cc.moveBy(2, cc.p(0, -180));
         var wait = cc.moveBy(0.8, cc.p(0, 0));
@@ -48,38 +57,37 @@ cc.Class({
         apple.runAction(action);
     },
 
-
-    dropApple: function () {
-        this.monkeyAction();
-        this.appleAction();
-    },
-
     // called every frame, uncomment this function to activate update callback
     update: function (dt) {
-        var redApple = this.node.getChildByName("redApple");
-        if (redApple && redApple.y < - this.gameHeight / 2 - redApple.height / 2) {
-            redApple.destroy();
+        var dropApple = this.node.getChildByName("redApple"); // 得到掉落的苹果
+        if (dropApple && dropApple.y < - this.gameHeight / 2 - dropApple.height / 2) {
+            dropApple.destroy();
+            console.log("dropApple destroy");
         }
         this.recordScore();
+        this.redAppleCount = this.player.getComponent("player").redAppleCount;
+        this.yellowAppleCount = this.player.getComponent("player").yellowAppleCount;
+        this.greenAppleCount = this.player.getComponent("player").greenAppleCount;
     },
 
     recordScore: function () {
         var apples = this.gainApple.children;
-        var redAppleCount = window.redAppleCount;
+        var redAppleCount = this.redAppleCount;
         for (var i = 0; i < redAppleCount && i < apples.length; i++) {
             apples[i].opacity = 255;
         }
     },
 
     pauseGame: function () {
-        var action = cc.sequence(cc.scaleTo(0.1, 3), cc.scaleTo(0.1, 1));
+        var action = cc.sequence(cc.scaleTo(0.1, 1.2), cc.scaleTo(0.1, 1));
         this.pauseButton.runAction(action);
         if (cc.director.isPaused()) {
             cc.director.resume();
-            console.log("continue");
         } else {
-            cc.director.pause();
-            console.log("pause");
+            this.scheduleOnce(function () {
+                cc.director.pause();
+            }, 0.2)
         }
-    }
+    },
+
 });

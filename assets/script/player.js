@@ -23,7 +23,9 @@ cc.Class({
         var manager = cc.director.getCollisionManager();
         manager.enabled = true;
 
-        window.redAppleCount = 0;
+        this.redAppleCount = 0;
+        this.yellowAppleCount = 0;
+        this.greenAppleCount = 0;
     },
 
     onDestroy: function () {
@@ -43,10 +45,11 @@ cc.Class({
         this._time += 1;
         this.playerMove = this._acc.x * dt * (this.speed + this._time);
         player.x += this.playerMove;
-        if (this.playerMove > 0) {
-            this.playAnimByName("right0");
-        } else if (this.playerMove <= 0) {
-            this.playAnimByName("left0");
+        this.playAnimByName("right0");
+        if (this.playerMove >= 0) {
+            this.player.scaleX = 1;
+        } else if (this.playerMove < 0) {
+            this.player.scaleX = -1;
         }
         player.x = cc.clampf(player.x, -range.x, range.x);
         if (player.x <= -range.x || player.x >= range.x) {
@@ -65,10 +68,17 @@ cc.Class({
 
     onCollisionEnter: function (other, self) {
         // tag 1 为向右的碰撞 tag 2 为向左的碰撞
-        if ((this.playerMove > 0 && self.tag == 1) || (this.playerMove <= 0 && self.tag == 2)) {
-            console.log(other.node.name);
+        if ((this.playerMove >= 0 && self.tag == 1) || (this.playerMove < 0 && self.tag == 2)) {
+            if (other.node.name == "redApple") {
+                this.redAppleCount += 1;
+            }
+            if (other.node.name == "yellowApple") {
+                this.yellowAppleCount += 1;
+            }
+            if (other.node.name == "greenApple") {
+                this.greenAppleCount += 1;
+            }
             other.node.destroy();
-            window.redAppleCount += 1;
         }
     },
 
