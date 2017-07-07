@@ -5,7 +5,7 @@ cc.Class({
         player: cc.Node,  // 角色节点
         speed: 250,  // 初始速度
         _time: 0,  // 随时间增加的速度值
-        _range: cc.p(0, 0),  // 边界坐标
+        _rangeX: 0,  // 边界坐标
         _acc: cc.p(0, 0),  // 设备重力感应数据
     },
 
@@ -14,8 +14,7 @@ cc.Class({
         cc.inputManager.setAccelerometerEnabled(true);
         cc.systemEvent.on(cc.SystemEvent.EventType.DEVICEMOTION, this.onDeviceMotionEvent, this);
         var screenSize = cc.view.getVisibleSize();
-        this._range.x = screenSize.width / 2 - this.player.width / 2;
-        this._range.y = screenSize.height / 2 - this.player.height / 2;
+        this._rangeX = screenSize.width / 2 + this.player.x / 3;
 
         this.playerAnim = this.player.getComponent(cc.Animation);
         this.lastAnimName = null;
@@ -43,7 +42,7 @@ cc.Class({
 
     // called every frame, uncomment this function to activate update callback
     update: function (dt) {
-        var player = this.player, range = this._range;
+        var player = this.player, range = this._rangeX;
         this._time += 1;
         this.playerMove = this._acc.x * dt * (this.speed + this._time);
         player.x += this.playerMove;
@@ -52,8 +51,8 @@ cc.Class({
         } else if (this.playerMove < 0) {
             this.player.scaleX = -1;
         }
-        player.x = cc.clampf(player.x, -range.x, range.x);
-        if (player.x <= -range.x || player.x >= range.x) {
+        player.x = cc.clampf(player.x, -range, range);
+        if (player.x <= -range || player.x >= range) {
             this._time = 0;
         }
     },

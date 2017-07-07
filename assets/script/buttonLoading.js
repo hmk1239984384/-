@@ -2,7 +2,7 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        loadingAnim: cc.Animation
+        loadingAnim: cc.Animation, // loading Node
     },
 
     // use this for initialization
@@ -11,12 +11,11 @@ cc.Class({
     },
 
     playLoadingAnim: function () {
-        // console.log(this.node.name);
         this.loadingAnim.play();
         this.schedule(this.changeScene, 1);
     },
 
-    changeScene: function () {
+    changeScene: function (event) {
         if (this.node.name == "play") {
             cc.director.loadScene("game");
         } else if (this.node.name == "help") {

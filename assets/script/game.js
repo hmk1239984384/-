@@ -6,12 +6,13 @@ cc.Class({
         monkey: cc.Node, // 猴子节点
         applePrefab: cc.Prefab,  // 苹果预设
         appleImg: [cc.SpriteFrame],  // 3种苹果图片
-        monkeyImg: [cc.SpriteFrame],  // 猴子图片 抓手和放手
+        monkeyImg: [cc.SpriteFrame],  // 猴子图片,抓手和放手
         gainApple: [cc.Node],   // 3种苹果记分板的节点组
         pauseButton: cc.Node,   // 暂停按钮
         playerNode: cc.Node,   // 人物节点
         leaves: cc.Node, // 树叶遮罩
-        levelLabel: cc.Label,
+        levelLabel: cc.Label, // 木版上的字
+        nodeScoreBoard: cc.Node
     },
 
     // use this for initialization
@@ -19,9 +20,6 @@ cc.Class({
         this.gameWidth = cc.winSize.width;
         this.gameHeight = cc.winSize.height;
         this.leaves.zIndex = 2; // 将树叶遮罩放在猴子上层
-        this.dropApple(); // 猴子和苹果掉落动画
-        this.schedule(this.dropApple, 3);
-        this.lastMonkeyPosition = null; // 与苹果同时下来时，猴子的位置
         this.levelNum = window.levelNum || 1; // 获取关卡数
         this.levelLabel.string = "Level " + this.levelNum; // 更改记分板上关卡显示
         this.appleTypeNum = level[this.levelNum - 1].appleTypeNum;// 苹果种类数量
@@ -33,8 +31,12 @@ cc.Class({
         this.redApples = this.gainApple[0].children;
         this.yellowApples = this.gainApple[1].children;
         this.greenApples = this.gainApple[2].children;
-
         this.changeAppleNum();// 根据数据动态调节记分板上需要的目标苹果数量
+        this.scoreboardDownAction(); // 记分板动画
+        this.pauseButtonAction(); // 暂停动画
+        this.dropApple(); // 猴子和苹果掉落动画
+        this.schedule(this.dropApple, 3);
+        this.lastMonkeyPosition = null; // 与苹果同时下来时，猴子的位置
     },
 
     // 根据数据动态调节记分板上需要的目标苹果数量
@@ -60,6 +62,20 @@ cc.Class({
         }
     },
 
+    scoreboardDownAction: function () {
+        var action = cc.moveBy(1.2, cc.p(0, -230)).easing(cc.easeQuinticActionIn(100));
+        var action1 = cc.moveBy(0.8,cc.p(0,40)).easing(cc.easeQuinticActionOut(50));
+        var action2 = cc.sequence(action,action1);
+        this.nodeScoreBoard.runAction(action);
+    },
+
+    pauseButtonAction:function(){
+        var action1 = cc.rotateBy(1.5,-200);
+        var action2 = cc.rotateBy(0.5,20);
+        var action3 = cc.sequence(action1,action2).easing(cc.easeCubicActionInOut(3));
+        this.pauseButton.runAction(action3);
+    },
+
     // 猴子和苹果掉落动画
     dropApple: function () {
         this.monkeyAction();
@@ -70,7 +86,7 @@ cc.Class({
         var monkey = cc.instantiate(this.monkey);
         this.node.addChild(monkey, 1);
         monkey.x = cc.random0To1() * this.gameWidth - (this.gameWidth / 2); //  -480 < x < 480
-        monkey.y = 400;
+        monkey.y = 446;
         this.lastMonkeyPosition = cc.p(monkey.x, monkey.y);
         var monkeySprite = monkey.getComponent(cc.Sprite);
         monkeySprite.spriteFrame = this.monkeyImg[0];
