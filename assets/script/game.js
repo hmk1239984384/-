@@ -1,4 +1,4 @@
-var level = require("leveldata")
+var level = require("leveldata");
 cc.Class({
     extends: cc.Component,
 
@@ -10,47 +10,52 @@ cc.Class({
         gainApple: [cc.Node],   // 3种苹果记分板的节点组
         pauseButton: cc.Node,   // 暂停按钮
         playerNode: cc.Node,   // 人物节点
+        leaves: cc.Node, // 树叶遮罩
+        levelLabel: cc.Label,
     },
 
     // use this for initialization
     onLoad: function () {
+        this.gameWidth = cc.winSize.width;
         this.gameHeight = cc.winSize.height;
-        this.dropApple();
+        this.leaves.zIndex = 2; // 将树叶遮罩放在猴子上层
+        this.dropApple(); // 猴子和苹果掉落动画
         this.schedule(this.dropApple, 3);
-        this.lastMonkeyPosition = null;
-        this.levelNum = level[0]; // 获取关卡数
-        this.appleTypeNum = level[this.levelNum].appleTypeNum;// 苹果种类数量
+        this.lastMonkeyPosition = null; // 与苹果同时下来时，猴子的位置
+        this.levelNum = window.levelNum || 1; // 获取关卡数
+        this.levelLabel.string = "Level " + this.levelNum; // 更改记分板上关卡显示
+        this.appleTypeNum = level[this.levelNum - 1].appleTypeNum;// 苹果种类数量
         // 获取关卡中各种苹果需要的数量
-        this.redAppleMaxNum = level[this.levelNum].redAppleMaxNum;
-        this.yellowAppleMaxNum = level[this.levelNum].yellowAppleMaxNum;
-        this.greenAppleMaxNum = level[this.levelNum].greenAppleMaxNum;
+        this.redAppleMaxNum = level[this.levelNum - 1].redAppleMaxNum;
+        this.yellowAppleMaxNum = level[this.levelNum - 1].yellowAppleMaxNum;
+        this.greenAppleMaxNum = level[this.levelNum - 1].greenAppleMaxNum;
+        // 获取每种苹果的节点组
+        this.redApples = this.gainApple[0].children;
+        this.yellowApples = this.gainApple[1].children;
+        this.greenApples = this.gainApple[2].children;
 
-        this.changeAppleNum();
+        this.changeAppleNum();// 根据数据动态调节记分板上需要的目标苹果数量
     },
 
     // 根据数据动态调节记分板上需要的目标苹果数量
     changeAppleNum: function () {
-        // 获取每种苹果的节点组
-        var redApples = this.gainApple[0].children;
-        var yellowApples = this.gainApple[1].children;
-        var greenApples = this.gainApple[2].children;
         // 设置苹果
         for (var i = 0; i < this.redAppleMaxNum; i++) {
-            redApples[i].active = true;
-            redApples[i].opacity = 70;
-            var redAppleSprite = redApples[i].getComponent(cc.Sprite);
+            this.redApples[i].active = true;
+            this.redApples[i].opacity = 70;
+            var redAppleSprite = this.redApples[i].getComponent(cc.Sprite);
             redAppleSprite.spriteFrame = this.appleImg[0];
         }
         for (var i = 0; i < this.yellowAppleMaxNum; i++) {
-            yellowApples[i].active = true;
-            yellowApples[i].opacity = 70;
-            var yellowAppleSprite = yellowApples[i].getComponent(cc.Sprite);
+            this.yellowApples[i].active = true;
+            this.yellowApples[i].opacity = 70;
+            var yellowAppleSprite = this.yellowApples[i].getComponent(cc.Sprite);
             yellowAppleSprite.spriteFrame = this.appleImg[1];
         }
         for (var i = 0; i < this.greenAppleMaxNum; i++) {
-            greenApples[i].active = true;
-            greenApples[i].opacity = 70;
-            var greenAppleSprite = greenApples[i].getComponent(cc.Sprite);
+            this.greenApples[i].active = true;
+            this.greenApples[i].opacity = 70;
+            var greenAppleSprite = this.greenApples[i].getComponent(cc.Sprite);
             greenAppleSprite.spriteFrame = this.appleImg[2];
         }
     },
@@ -63,9 +68,9 @@ cc.Class({
 
     monkeyAction: function () {
         var monkey = cc.instantiate(this.monkey);
-        this.node.addChild(monkey);
-        monkey.x = cc.random0To1() * 610 - 180;
-        monkey.y = 450;
+        this.node.addChild(monkey, 1);
+        monkey.x = cc.random0To1() * this.gameWidth - (this.gameWidth / 2); //  -480 < x < 480
+        monkey.y = 400;
         this.lastMonkeyPosition = cc.p(monkey.x, monkey.y);
         var monkeySprite = monkey.getComponent(cc.Sprite);
         monkeySprite.spriteFrame = this.monkeyImg[0];
@@ -122,40 +127,40 @@ cc.Class({
         this.yellowAppleCount = this.playerNode.getComponent("player").yellowAppleCount;
         this.greenAppleCount = this.playerNode.getComponent("player").greenAppleCount;
         this.recordScore();
+        this.passBarrier();
     },
 
     // 记录分数
     recordScore: function () {
-        // 获取每种苹果的节点组
-        var redApples = this.gainApple[0].children;
-        var yellowApples = this.gainApple[1].children;
-        var greenApples = this.gainApple[2].children;
         // 苹果变亮
         for (var i = 0; i < this.redAppleCount && i < this.redAppleMaxNum; i++) {
-            redApples[i].active = true;
-            redApples[i].opacity = 255;
-            var redAppleSprite = redApples[i].getComponent(cc.Sprite);
+            this.redApples[i].active = true;
+            this.redApples[i].opacity = 255;
+            var redAppleSprite = this.redApples[i].getComponent(cc.Sprite);
             redAppleSprite.spriteFrame = this.appleImg[0];
         }
         for (var i = 0; i < this.yellowAppleCount && i < this.yellowAppleMaxNum; i++) {
-            yellowApples[i].active = true;
-            yellowApples[i].opacity = 255;
-            var yellowAppleSprite = yellowApples[i].getComponent(cc.Sprite);
+            this.yellowApples[i].active = true;
+            this.yellowApples[i].opacity = 255;
+            var yellowAppleSprite = this.yellowApples[i].getComponent(cc.Sprite);
             yellowAppleSprite.spriteFrame = this.appleImg[1];
         }
         for (var i = 0; i < this.greenAppleCount && i < this.greenAppleMaxNum; i++) {
-            greenApples[i].active = true;
-            greenApples[i].opacity = 255;
-            var greenAppleSprite = greenApples[i].getComponent(cc.Sprite);
+            this.greenApples[i].active = true;
+            this.greenApples[i].opacity = 255;
+            var greenAppleSprite = this.greenApples[i].getComponent(cc.Sprite);
             greenAppleSprite.spriteFrame = this.appleImg[2];
-        }
-        // 过关判定
-        if (this.redAppleCount == this.redAppleMaxNum && this.yellowAppleCount == this.yellowAppleMaxNum && this.greenAppleCount == this.greenAppleMaxNum) {
-            level[0] += 1;
-            cc.director.loadScene("game");
         }
     },
 
+    // 过关判定
+    passBarrier: function () {
+        if (this.redAppleCount >= this.redAppleMaxNum && this.yellowAppleCount >= this.yellowAppleMaxNum && this.greenAppleCount >= this.greenAppleMaxNum && this.levelNum <= 5) {
+            this.levelNum += 1;
+            window.levelNum = this.levelNum;
+            cc.director.loadScene("game");
+        }
+    },
 
     pauseGame: function () {
         var action = cc.sequence(cc.scaleTo(0.1, 1.2), cc.scaleTo(0.1, 1));
