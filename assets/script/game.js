@@ -12,7 +12,8 @@ cc.Class({
         playerNode: cc.Node,   // 人物节点
         leaves: cc.Node, // 树叶遮罩
         levelLabel: cc.Label, // 木版上的字
-        nodeScoreBoard: cc.Node
+        nodeScoreBoard: cc.Node, // 记分板节点组
+        nodePauseInterface: cc.Node, // 暂停界面节点
     },
 
     // use this for initialization
@@ -64,15 +65,15 @@ cc.Class({
 
     scoreboardDownAction: function () {
         var action = cc.moveBy(1.2, cc.p(0, -230)).easing(cc.easeQuinticActionIn(100));
-        var action1 = cc.moveBy(0.8,cc.p(0,40)).easing(cc.easeQuinticActionOut(50));
-        var action2 = cc.sequence(action,action1);
+        var action1 = cc.moveBy(0.8, cc.p(0, 40)).easing(cc.easeQuinticActionOut(50));
+        var action2 = cc.sequence(action, action1);
         this.nodeScoreBoard.runAction(action);
     },
 
-    pauseButtonAction:function(){
-        var action1 = cc.rotateBy(1.5,-200);
-        var action2 = cc.rotateBy(0.5,20);
-        var action3 = cc.sequence(action1,action2).easing(cc.easeCubicActionInOut(3));
+    pauseButtonAction: function () {
+        var action1 = cc.rotateBy(1.5, -200);
+        var action2 = cc.rotateBy(0.5, 20);
+        var action3 = cc.sequence(action1, action2).easing(cc.easeCubicActionInOut(3));
         this.pauseButton.runAction(action3);
     },
 
@@ -178,10 +179,28 @@ cc.Class({
         }
     },
 
-    pauseGame: function () {
+    pauseButtonClick: function () {
         var action = cc.sequence(cc.scaleTo(0.1, 1.2), cc.scaleTo(0.1, 1));
         this.pauseButton.runAction(action);
+        var pauseInterfaceChildren = this.nodePauseInterface.children;
+        for (var i = 0; i < pauseInterfaceChildren.length; i++) {
+            pauseInterfaceChildren[i].active = true;
+        }
+        this.pauseGame();
+        this.pauseButton.active = false;
+    },
+
+    continueGame: function () {
+        var pauseInterfaceChildren = this.nodePauseInterface.children;
+        for (var i = 0; i < pauseInterfaceChildren.length; i++) {
+            pauseInterfaceChildren[i].active = false;
+        }
+        this.pauseGame();
+    },
+
+    pauseGame: function () {
         if (cc.director.isPaused()) {
+            this.pauseButton.active = true;
             cc.director.resume();
         } else {
             this.scheduleOnce(function () {
@@ -189,5 +208,4 @@ cc.Class({
             }, 0.2)
         }
     },
-
 });
