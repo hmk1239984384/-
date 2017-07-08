@@ -86,7 +86,7 @@ cc.Class({
     monkeyAction: function () {
         var monkey = cc.instantiate(this.monkey);
         this.node.addChild(monkey, 1);
-        monkey.x = cc.random0To1() * this.gameWidth - (this.gameWidth / 2); //  -480 < x < 480
+        monkey.x = cc.random0To1() * (this.gameWidth - this.monkey.width / 2)- ((this.gameWidth - this.monkey.width / 2) / 2); //  -420 < x < 420  让猴子在屏幕内出现
         monkey.y = 446;
         this.lastMonkeyPosition = cc.p(monkey.x, monkey.y);
         var monkeySprite = monkey.getComponent(cc.Sprite);
@@ -144,7 +144,6 @@ cc.Class({
         this.yellowAppleCount = this.playerNode.getComponent("player").yellowAppleCount;
         this.greenAppleCount = this.playerNode.getComponent("player").greenAppleCount;
         this.recordScore();
-        this.passBarrier();
     },
 
     // 记录分数
@@ -170,18 +169,8 @@ cc.Class({
         }
     },
 
-    // 过关判定
-    passBarrier: function () {
-        if (this.redAppleCount >= this.redAppleMaxNum && this.yellowAppleCount >= this.yellowAppleMaxNum && this.greenAppleCount >= this.greenAppleMaxNum && this.levelNum <= 5) {
-            this.levelNum += 1;
-            window.levelNum = this.levelNum;
-            cc.director.loadScene("game");
-        }
-    },
-
+    // 点击暂停按钮
     pauseButtonClick: function () {
-        var action = cc.sequence(cc.scaleTo(0.1, 1.2), cc.scaleTo(0.1, 1));
-        this.pauseButton.runAction(action);
         var pauseInterfaceChildren = this.nodePauseInterface.children;
         for (var i = 0; i < pauseInterfaceChildren.length; i++) {
             pauseInterfaceChildren[i].active = true;
@@ -190,6 +179,7 @@ cc.Class({
         this.pauseButton.active = false;
     },
 
+    // 暂停界面点击继续按钮
     continueGame: function () {
         var pauseInterfaceChildren = this.nodePauseInterface.children;
         for (var i = 0; i < pauseInterfaceChildren.length; i++) {
@@ -198,14 +188,19 @@ cc.Class({
         this.pauseGame();
     },
 
+    // 暂停或恢复游戏
     pauseGame: function () {
         if (cc.director.isPaused()) {
             this.pauseButton.active = true;
             cc.director.resume();
         } else {
-            this.scheduleOnce(function () {
-                cc.director.pause();
-            }, 0.2)
+            cc.director.pause();
         }
     },
+
+    // 下一关界面点击继续按钮
+    nextLevel: function () {
+        cc.director.loadScene("game");
+        this.pauseGame();
+    }
 });
