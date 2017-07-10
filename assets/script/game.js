@@ -14,10 +14,26 @@ cc.Class({
         levelLabel: cc.Label, // 木版上的字
         nodeScoreBoard: cc.Node, // 记分板节点组
         nodePauseInterface: cc.Node, // 暂停界面节点
+        bgm: cc.AudioClip, // 背景音乐
+        buttonClickAudio: cc.AudioClip,  // 按钮点击音效
+        muteImg: [cc.SpriteFrame],  // 静音按钮图片, 0 为静音图标
+        nodeAudioButton: cc.Node  // 控制静音按钮
     },
 
     // use this for initialization
     onLoad: function () {
+        this.audioSprite = this.nodeAudioButton.getComponent(cc.Sprite); // 获取声音按钮 Sprite 组件
+        if (window.isMuted == undefined) {
+            window.isMuted = false;
+            this.audioSprite.spriteFrame = this.muteImg[1];
+        }
+        if (window.isMuted === false) {
+            this.audioSprite.spriteFrame = this.muteImg[1];
+            cc.audioEngine.stopAll(); // 防止音乐重叠
+            this.bgmId = cc.audioEngine.play(this.bgm, true, 1);
+        }else if(window.isMuted === true){
+            this.audioSprite.spriteFrame = this.muteImg[0];
+        }
         this.gameWidth = cc.winSize.width;
         this.gameHeight = cc.winSize.height;
         this.leaves.zIndex = 2; // 将树叶遮罩放在猴子上层
@@ -145,6 +161,9 @@ cc.Class({
 
     // 点击暂停按钮
     pauseButtonClick: function () {
+        if (window.isMuted === false) {
+            var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
+        }
         this.nodePauseInterface.active = true; // 显示暂停界面
         this.pauseGame(); // 暂停游戏
         this.pauseButton.active = false;
@@ -152,20 +171,50 @@ cc.Class({
 
     // 暂停界面点击继续按钮
     continueGame: function () {
+        if (window.isMuted === false) {
+            var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
+        }
         this.nodePauseInterface.active = false; // 隐藏暂停界面
         this.pauseGame();
     },
 
     // 过关界面点击继续按钮
     nextLevel: function () {
+        if (window.isMuted === false) {
+            var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
+        }
         cc.director.loadScene("game");
         this.pauseGame();
     },
 
+    // 重新开始界面
     restartButtonClick: function () {
+        if (window.isMuted === false) {
+            var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
+        }
         window.levelNum = this.levelNum;  // 将关卡数恢复成当前关
         cc.director.loadScene("game");
         this.pauseGame();
+    },
+
+    menuButtonClick: function () {
+        if (window.isMuted === false) {
+            var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
+        }
+        this.pauseGame();
+        cc.director.loadScene("start");
+    },
+
+    muteButtonClick: function () {
+        if (window.isMuted === false) {
+            window.isMuted = true;
+            cc.audioEngine.stopAll();
+            this.audioSprite.spriteFrame = this.muteImg[0];
+        } else {
+            window.isMuted = false;
+            cc.audioEngine.play(this.bgm,true,1);
+            this.audioSprite.spriteFrame = this.muteImg[1];
+        }
     },
 
     // 暂停或恢复游戏
