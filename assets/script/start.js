@@ -10,13 +10,19 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+        // 开始游戏按钮动画
         var action = cc.rotateBy(1, 20).easing(cc.easeCubicActionIn(30));
         var action1 = cc.rotateBy(1, -20).easing(cc.easeCubicActionOut(30));
         var action2 = cc.sequence(action, action1);
         this.btPlay.runAction(cc.repeatForever(action2));
+        // 帮助动画
+        var action3 = cc.rotateBy(2, -30).easing(cc.easeCubicActionIn(30));
+        var action4 = cc.rotateBy(2, 30).easing(cc.easeCubicActionIn(30));
+        var action5 = cc.repeatForever(cc.sequence(action3, action4));
+        this.phoneImg.runAction(action5);
     },
 
-    // 更改场景
+    // 播放 Loading 界面并跳转场景
     changeScene: function () {
         this.loadingAnim.play();
         this.scheduleOnce(function () {
@@ -29,12 +35,7 @@ cc.Class({
         this.phoneImg.rotation = 0;
         if (this.noHelpFace.active === false) {
             this.noHelpFace.active = true;
-            var action = cc.rotateBy(2, -30).easing(cc.easeCubicActionIn(30));
-            var action2 = cc.rotateBy(2, 30).easing(cc.easeCubicActionOut(30));
-            var action3 = cc.repeatForever(cc.sequence(action, action2));
-            this.phoneImg.runAction(action3);
         } else if (this.noHelpFace.active === true) {
-            this.phoneImg.stopAction(action3);
             this.noHelpFace.active = false;
         }
     }

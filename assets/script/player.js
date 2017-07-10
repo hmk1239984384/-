@@ -10,6 +10,7 @@ cc.Class({
         _acc: cc.p(0, 0),  // 设备重力感应数据
         nodeContinueInterface: cc.Node,  // 继续界面节点组
         pauseButton: cc.Node,
+        gainApple: [cc.Node],   // 3种苹果记分板的节点组
     },
 
     // use this for initialization
@@ -35,6 +36,10 @@ cc.Class({
         this.redAppleMaxNum = level[this.levelNum - 1].redAppleMaxNum;
         this.yellowAppleMaxNum = level[this.levelNum - 1].yellowAppleMaxNum;
         this.greenAppleMaxNum = level[this.levelNum - 1].greenAppleMaxNum;
+        // 获取每种苹果的节点组
+        this.redApples = this.gainApple[0].children;
+        this.yellowApples = this.gainApple[1].children;
+        this.greenApples = this.gainApple[2].children;
     },
 
     onDestroy: function () {
@@ -51,7 +56,7 @@ cc.Class({
     // called every frame, uncomment this function to activate update callback
     update: function (dt) {
         var player = this.player, range = this._rangeX;
-        this._time += 1;
+        this._time += 3;
         this.playerMove = this._acc.x * dt * (this.speed + this._time);
         player.x += this.playerMove;
         if (this.playerMove >= 0) {
@@ -85,7 +90,22 @@ cc.Class({
             this.greenAppleCount += 1;
         }
         other.node.destroy();
+        this.recordScore();
         this.passBarrier();
+    },
+
+    // 记录分数
+    recordScore: function () {
+        // 苹果变亮
+        for (var i = 0; i < this.redAppleCount && i < this.redAppleMaxNum; i++) {
+            this.redApples[i].opacity = 255;
+        }
+        for (var i = 0; i < this.yellowAppleCount && i < this.yellowAppleMaxNum; i++) {
+            this.yellowApples[i].opacity = 255;
+        }
+        for (var i = 0; i < this.greenAppleCount && i < this.greenAppleMaxNum; i++) {
+            this.greenApples[i].opacity = 255;
+        }
     },
 
     passBarrier: function () {
@@ -93,10 +113,7 @@ cc.Class({
         if (this.redAppleCount >= this.redAppleMaxNum && this.yellowAppleCount >= this.yellowAppleMaxNum && this.greenAppleCount >= this.greenAppleMaxNum && this.levelNum <= level.length) {
             this.levelNum += 1;
             window.levelNum = this.levelNum;
-            var continueChildren = this.nodeContinueInterface.children;
-            for (var i = 0; i < continueChildren.length; i++) {
-                continueChildren[i].active = true;
-            }
+            this.nodeContinueInterface.active = true;
             this.pauseButton.active = false;
             this.pauseGame();
         }

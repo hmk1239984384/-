@@ -35,8 +35,7 @@ cc.Class({
         this.changeAppleNum();// 根据数据动态调节记分板上需要的目标苹果数量
         this.scoreboardDownAction(); // 记分板动画
         this.pauseButtonAction(); // 暂停动画
-        this.dropApple(); // 猴子和苹果掉落动画
-        this.schedule(this.dropApple, 3);
+        this.schedule(this.dropApple, 3); // 循环掉落苹果
         this.lastMonkeyPosition = null; // 与苹果同时下来时，猴子的位置
     },
 
@@ -48,18 +47,21 @@ cc.Class({
             this.redApples[i].opacity = 70;
             var redAppleSprite = this.redApples[i].getComponent(cc.Sprite);
             redAppleSprite.spriteFrame = this.appleImg[0];
+            this.redApples[i].runAction(cc.blink(4, 4));
         }
         for (var i = 0; i < this.yellowAppleMaxNum; i++) {
             this.yellowApples[i].active = true;
             this.yellowApples[i].opacity = 70;
             var yellowAppleSprite = this.yellowApples[i].getComponent(cc.Sprite);
             yellowAppleSprite.spriteFrame = this.appleImg[1];
+            this.yellowApples[i].runAction(cc.blink(4, 4));
         }
         for (var i = 0; i < this.greenAppleMaxNum; i++) {
             this.greenApples[i].active = true;
             this.greenApples[i].opacity = 70;
             var greenAppleSprite = this.greenApples[i].getComponent(cc.Sprite);
             greenAppleSprite.spriteFrame = this.appleImg[2];
+            this.greenApples[i].runAction(cc.blink(4, 4));
         }
     },
 
@@ -86,7 +88,7 @@ cc.Class({
     monkeyAction: function () {
         var monkey = cc.instantiate(this.monkey);
         this.node.addChild(monkey, 1);
-        monkey.x = cc.random0To1() * (this.gameWidth - this.monkey.width / 2)- ((this.gameWidth - this.monkey.width / 2) / 2); //  -420 < x < 420  让猴子在屏幕内出现
+        monkey.x = cc.random0To1() * (this.gameWidth - this.monkey.width / 2) - ((this.gameWidth - this.monkey.width / 2) / 2); //  -420 < x < 420  让猴子在屏幕内出现
         monkey.y = 446;
         this.lastMonkeyPosition = cc.p(monkey.x, monkey.y);
         var monkeySprite = monkey.getComponent(cc.Sprite);
@@ -139,52 +141,30 @@ cc.Class({
             dropApple.destroy();
             console.log("dropApple destroy");
         }
-        // 得到分数
-        this.redAppleCount = this.playerNode.getComponent("player").redAppleCount;
-        this.yellowAppleCount = this.playerNode.getComponent("player").yellowAppleCount;
-        this.greenAppleCount = this.playerNode.getComponent("player").greenAppleCount;
-        this.recordScore();
-    },
-
-    // 记录分数
-    recordScore: function () {
-        // 苹果变亮
-        for (var i = 0; i < this.redAppleCount && i < this.redAppleMaxNum; i++) {
-            this.redApples[i].active = true;
-            this.redApples[i].opacity = 255;
-            var redAppleSprite = this.redApples[i].getComponent(cc.Sprite);
-            redAppleSprite.spriteFrame = this.appleImg[0];
-        }
-        for (var i = 0; i < this.yellowAppleCount && i < this.yellowAppleMaxNum; i++) {
-            this.yellowApples[i].active = true;
-            this.yellowApples[i].opacity = 255;
-            var yellowAppleSprite = this.yellowApples[i].getComponent(cc.Sprite);
-            yellowAppleSprite.spriteFrame = this.appleImg[1];
-        }
-        for (var i = 0; i < this.greenAppleCount && i < this.greenAppleMaxNum; i++) {
-            this.greenApples[i].active = true;
-            this.greenApples[i].opacity = 255;
-            var greenAppleSprite = this.greenApples[i].getComponent(cc.Sprite);
-            greenAppleSprite.spriteFrame = this.appleImg[2];
-        }
     },
 
     // 点击暂停按钮
     pauseButtonClick: function () {
-        var pauseInterfaceChildren = this.nodePauseInterface.children;
-        for (var i = 0; i < pauseInterfaceChildren.length; i++) {
-            pauseInterfaceChildren[i].active = true;
-        }
-        this.pauseGame();
+        this.nodePauseInterface.active = true; // 显示暂停界面
+        this.pauseGame(); // 暂停游戏
         this.pauseButton.active = false;
     },
 
     // 暂停界面点击继续按钮
     continueGame: function () {
-        var pauseInterfaceChildren = this.nodePauseInterface.children;
-        for (var i = 0; i < pauseInterfaceChildren.length; i++) {
-            pauseInterfaceChildren[i].active = false;
-        }
+        this.nodePauseInterface.active = false; // 隐藏暂停界面
+        this.pauseGame();
+    },
+
+    // 过关界面点击继续按钮
+    nextLevel: function () {
+        cc.director.loadScene("game");
+        this.pauseGame();
+    },
+
+    restartButtonClick: function () {
+        window.levelNum = this.levelNum;  // 将关卡数恢复成当前关
+        cc.director.loadScene("game");
         this.pauseGame();
     },
 
@@ -197,10 +177,4 @@ cc.Class({
             cc.director.pause();
         }
     },
-
-    // 下一关界面点击继续按钮
-    nextLevel: function () {
-        cc.director.loadScene("game");
-        this.pauseGame();
-    }
 });
