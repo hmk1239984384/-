@@ -130,7 +130,7 @@ cc.Class({
 
     passBarrier: function () {
         // 过关判定
-        if (this.redAppleCount >= this.redAppleMaxNum && this.yellowAppleCount >= this.yellowAppleMaxNum && this.greenAppleCount >= this.greenAppleMaxNum && this.levelNum <= level.length) {
+        if (this.redAppleCount >= this.redAppleMaxNum && this.yellowAppleCount >= this.yellowAppleMaxNum && this.greenAppleCount >= this.greenAppleMaxNum && this.peachCount >= this.peachMaxNum && this.pearCount >= this.pearMaxNum && this.levelNum <= level.length) {
             this.levelNum += 1;
             window.levelNum = this.levelNum;
             this.nodeContinueInterface.active = true;
