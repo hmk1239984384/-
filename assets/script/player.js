@@ -10,7 +10,7 @@ cc.Class({
         _acc: cc.p(0, 0),  // 设备重力感应数据
         nodeContinueInterface: cc.Node,  // 继续界面节点组
         pauseButton: cc.Node,
-        gainApple: [cc.Node],   // 3种苹果记分板的节点组
+        gainScore: cc.Node,   // 苹果记分板
         getAppleAudio: cc.AudioClip,  // 获得苹果时音效
     },
 
@@ -31,16 +31,18 @@ cc.Class({
         this.redAppleCount = 0;
         this.yellowAppleCount = 0;
         this.greenAppleCount = 0;
+        this.peachCount = 0;
+        this.pearCount = 0;
         this.playAnimByName("right0"); // 播放动画
         this.levelNum = window.levelNum || 1; // 获取关卡数
         // 获取关卡中各种苹果需要的数量
         this.redAppleMaxNum = level[this.levelNum - 1].redAppleMaxNum;
         this.yellowAppleMaxNum = level[this.levelNum - 1].yellowAppleMaxNum;
         this.greenAppleMaxNum = level[this.levelNum - 1].greenAppleMaxNum;
+        this.peachMaxNum = level[this.levelNum - 1].peachMaxNum;
+        this.pearMaxNum = level[this.levelNum - 1].pearMaxNum;
         // 获取每种苹果的节点组
-        this.redApples = this.gainApple[0].children;
-        this.yellowApples = this.gainApple[1].children;
-        this.greenApples = this.gainApple[2].children;
+        this.scoreChildren = this.gainScore.children;
     },
 
     onDestroy: function () {
@@ -57,7 +59,7 @@ cc.Class({
     // called every frame, uncomment this function to activate update callback
     update: function (dt) {
         var player = this.player, range = this._rangeX;
-        this._time += 3;
+        this._time += 2;
         this.playerMove = this._acc.x * dt * (this.speed + this._time);
         player.x += this.playerMove;
         if (this.playerMove >= 0) {
@@ -91,6 +93,13 @@ cc.Class({
         if (other.node.name == "greenApple") {
             this.greenAppleCount += 1;
         }
+        if (other.node.name == "peach") {
+            this.peachCount += 1;
+        }
+        if (other.node.name == "pear") {
+            this.pearCount += 1;
+        }
+
         other.node.destroy();
         if (window.isMuted === false) {
             cc.audioEngine.play(this.getAppleAudio, false, 0.8);
@@ -102,14 +111,20 @@ cc.Class({
     // 记录分数
     recordScore: function () {
         // 苹果变亮
-        for (var i = 0; i < this.redAppleCount && i < this.redAppleMaxNum; i++) {
-            this.redApples[i].opacity = 255;
+        for (var j = 0; j < this.redAppleCount && j < this.redAppleMaxNum; j++) {
+            this.scoreChildren[j].opacity = 255;
         }
-        for (var i = 0; i < this.yellowAppleCount && i < this.yellowAppleMaxNum; i++) {
-            this.yellowApples[i].opacity = 255;
+        for (var k = this.redAppleMaxNum; k < this.redAppleMaxNum + this.yellowAppleCount && k < this.redAppleMaxNum + this.yellowAppleMaxNum; k++) {
+            this.scoreChildren[k].opacity = 255;
         }
-        for (var i = 0; i < this.greenAppleCount && i < this.greenAppleMaxNum; i++) {
-            this.greenApples[i].opacity = 255;
+        for (var l = this.redAppleMaxNum + this.yellowAppleMaxNum; l < this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleCount && l < this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum; l++) {
+            this.scoreChildren[l].opacity = 255;
+        }
+        for (var m = this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum; m < this.peachCount + this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum && m < this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum + this.peachMaxNum; m++) {
+            this.scoreChildren[m].opacity = 255;
+        }
+        for (var n = this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum + this.peachMaxNum; n < this.pearCount + this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum + this.peachMaxNum && n < this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum + this.peachMaxNum + this.pearMaxNum; n++) {
+            this.scoreChildren[n].opacity = 255;
         }
     },
 

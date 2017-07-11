@@ -7,7 +7,7 @@ cc.Class({
         applePrefab: cc.Prefab,  // 苹果预设
         appleImg: [cc.SpriteFrame],  // 3种苹果图片
         monkeyImg: [cc.SpriteFrame],  // 猴子图片,抓手和放手
-        gainApple: [cc.Node],   // 3种苹果记分板的节点组
+        gainScore: cc.Node,   // 苹果记分板
         pauseButton: cc.Node,   // 暂停按钮
         playerNode: cc.Node,   // 人物节点
         leaves: cc.Node, // 树叶遮罩
@@ -31,7 +31,7 @@ cc.Class({
             this.audioSprite.spriteFrame = this.muteImg[1];
             cc.audioEngine.stopAll(); // 防止音乐重叠
             this.bgmId = cc.audioEngine.play(this.bgm, true, 1);
-        }else if(window.isMuted === true){
+        } else if (window.isMuted === true) {
             this.audioSprite.spriteFrame = this.muteImg[0];
         }
         this.gameWidth = cc.winSize.width;
@@ -44,40 +44,49 @@ cc.Class({
         this.redAppleMaxNum = level[this.levelNum - 1].redAppleMaxNum;
         this.yellowAppleMaxNum = level[this.levelNum - 1].yellowAppleMaxNum;
         this.greenAppleMaxNum = level[this.levelNum - 1].greenAppleMaxNum;
+        this.peachMaxNum = level[this.levelNum - 1].peachMaxNum;
+        this.pearMaxNum = level[this.levelNum - 1].pearMaxNum;
         // 获取每种苹果的节点组
-        this.redApples = this.gainApple[0].children;
-        this.yellowApples = this.gainApple[1].children;
-        this.greenApples = this.gainApple[2].children;
+        this.scoreChildren = this.gainScore.children;
         this.changeAppleNum();// 根据数据动态调节记分板上需要的目标苹果数量
         this.scoreboardDownAction(); // 记分板动画
         this.pauseButtonAction(); // 暂停动画
-        this.schedule(this.dropApple, 3); // 循环掉落苹果
         this.lastMonkeyPosition = null; // 与苹果同时下来时，猴子的位置
+        this.schedule(this.dropApple, 3); // 循环掉落苹果
     },
 
     // 根据数据动态调节记分板上需要的目标苹果数量
     changeAppleNum: function () {
+        var allAppleNum = this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum + this.peachMaxNum + this.pearMaxNum;
         // 设置苹果
-        for (var i = 0; i < this.redAppleMaxNum; i++) {
-            this.redApples[i].active = true;
-            this.redApples[i].opacity = 70;
-            var redAppleSprite = this.redApples[i].getComponent(cc.Sprite);
-            redAppleSprite.spriteFrame = this.appleImg[0];
-            this.redApples[i].runAction(cc.blink(4, 4));
+        for (var i = 0; i < allAppleNum; i++) {
+            this.scoreChildren[i].active = true;
+            this.scoreChildren[i].opacity = 70;
         }
-        for (var i = 0; i < this.yellowAppleMaxNum; i++) {
-            this.yellowApples[i].active = true;
-            this.yellowApples[i].opacity = 70;
-            var yellowAppleSprite = this.yellowApples[i].getComponent(cc.Sprite);
-            yellowAppleSprite.spriteFrame = this.appleImg[1];
-            this.yellowApples[i].runAction(cc.blink(4, 4));
+        for (var j = 0; j < this.redAppleMaxNum; j++) {
+            var appleSprite = this.scoreChildren[j].getComponent(cc.Sprite);
+            appleSprite.spriteFrame = this.appleImg[0];
+            this.scoreChildren[j].runAction(cc.blink(4, 4));
         }
-        for (var i = 0; i < this.greenAppleMaxNum; i++) {
-            this.greenApples[i].active = true;
-            this.greenApples[i].opacity = 70;
-            var greenAppleSprite = this.greenApples[i].getComponent(cc.Sprite);
-            greenAppleSprite.spriteFrame = this.appleImg[2];
-            this.greenApples[i].runAction(cc.blink(4, 4));
+        for (var k = this.redAppleMaxNum; k < this.redAppleMaxNum + this.yellowAppleMaxNum; k++) {
+            var appleSprite = this.scoreChildren[k].getComponent(cc.Sprite);
+            appleSprite.spriteFrame = this.appleImg[1];
+            this.scoreChildren[k].runAction(cc.blink(4, 4));
+        }
+        for (var l = this.redAppleMaxNum + this.yellowAppleMaxNum; l < this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum; l++) {
+            var appleSprite = this.scoreChildren[l].getComponent(cc.Sprite);
+            appleSprite.spriteFrame = this.appleImg[2];
+            this.scoreChildren[l].runAction(cc.blink(4, 4));
+        }
+        for (var m = this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum; m < this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum + this.peachMaxNum; m++) {
+            var appleSprite = this.scoreChildren[m].getComponent(cc.Sprite);
+            appleSprite.spriteFrame = this.appleImg[3];
+            this.scoreChildren[m].runAction(cc.blink(4, 4));
+        }
+        for (var n = this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum + this.peachMaxNum; n < this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum + this.peachMaxNum + this.pearMaxNum; n++) {
+            var appleSprite = this.scoreChildren[n].getComponent(cc.Sprite);
+            appleSprite.spriteFrame = this.appleImg[4];
+            this.scoreChildren[n].runAction(cc.blink(4, 4));
         }
     },
 
@@ -139,6 +148,14 @@ cc.Class({
                 apple.name = "greenApple";
                 appleSprite.spriteFrame = this.appleImg[2];
                 break;
+            case 4:
+                apple.name = "peach";
+                appleSprite.spriteFrame = this.appleImg[3];
+                break;
+            case 5:
+                apple.name = "pear";
+                appleSprite.spriteFrame = this.appleImg[4];
+                break;
         }
         this.node.addChild(apple);
         apple.setPosition(this.lastMonkeyPosition.x + 20, this.lastMonkeyPosition.y - 90);
@@ -154,7 +171,7 @@ cc.Class({
     // called every frame, uncomment this function to activate update callback
     update: function (dt) {
         // 得到掉落的苹果并消除
-        var dropApple = this.node.getChildByName("redApple" || "yellowApple" || "greenApple");
+        var dropApple = this.node.getChildByName("redApple" || "yellowApple" || "greenApple" || "peach" || "pear");
         if (dropApple && dropApple.y < - this.gameHeight / 2 - dropApple.height / 2) {
             dropApple.destroy();
             console.log("dropApple destroy");
@@ -214,7 +231,7 @@ cc.Class({
             this.audioSprite.spriteFrame = this.muteImg[0];
         } else {
             window.isMuted = false;
-            cc.audioEngine.play(this.bgm,true,1);
+            cc.audioEngine.play(this.bgm, true, 1);
             this.audioSprite.spriteFrame = this.muteImg[1];
         }
     },
