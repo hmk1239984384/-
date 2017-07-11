@@ -81,13 +81,15 @@ cc.Class({
         }
     },
 
+    // 记分板下落动画
     scoreboardDownAction: function () {
-        var action = cc.moveBy(1.2, cc.p(0, -230)).easing(cc.easeQuinticActionIn(100));
-        var action1 = cc.moveBy(0.8, cc.p(0, 40)).easing(cc.easeQuinticActionOut(50));
+        var action = cc.moveBy(1.2, cc.p(0, -230)).easing(cc.easeElasticOut(3));
+        var action1 = cc.moveBy(0.8, cc.p(0, 40)).easing(cc.easeElasticIn(3));
         var action2 = cc.sequence(action, action1);
         this.nodeScoreBoard.runAction(action);
     },
 
+    // 暂停按钮出现动画
     pauseButtonAction: function () {
         var action1 = cc.rotateBy(1.5, -200);
         var action2 = cc.rotateBy(0.5, 20);

@@ -424,7 +424,7 @@
       "__id__": 2
     },
     "component": "start",
-    "handler": "changeScene",
+    "handler": "buttonClick",
     "customEventData": "play"
   },
   {
@@ -699,8 +699,8 @@
       "__id__": 2
     },
     "component": "start",
-    "handler": "showHelp",
-    "customEventData": ""
+    "handler": "buttonClick",
+    "customEventData": "help"
   },
   {
     "__type__": "cc.Node",
@@ -1269,6 +1269,9 @@
     ],
     "nodeAudioButton": {
       "__id__": 18
+    },
+    "startBgm": {
+      "__uuid__": "d793c5b2-d700-4055-8652-1692e3425940"
     }
   }
 ]

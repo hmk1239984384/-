@@ -1942,7 +1942,10 @@
       {
         "__id__": 33
       }
-    ]
+    ],
+    "getAppleAudio": {
+      "__uuid__": "8d03e5e8-2d91-4d2a-bb22-1c34a348c79a"
+    }
   },
   {
     "__type__": "cc.Node",

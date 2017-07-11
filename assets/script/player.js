@@ -11,6 +11,7 @@ cc.Class({
         nodeContinueInterface: cc.Node,  // 继续界面节点组
         pauseButton: cc.Node,
         gainApple: [cc.Node],   // 3种苹果记分板的节点组
+        getAppleAudio: cc.AudioClip,  // 获得苹果时音效
     },
 
     // use this for initialization
@@ -79,6 +80,7 @@ cc.Class({
         }
     },
 
+    // 碰撞时
     onCollisionEnter: function (other, self) {
         if (other.node.name == "redApple") {
             this.redAppleCount += 1;
@@ -90,6 +92,9 @@ cc.Class({
             this.greenAppleCount += 1;
         }
         other.node.destroy();
+        if (window.isMuted === false) {
+            cc.audioEngine.play(this.getAppleAudio, false, 0.8);
+        }
         this.recordScore();
         this.passBarrier();
     },
