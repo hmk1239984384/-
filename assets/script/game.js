@@ -14,14 +14,19 @@ cc.Class({
         levelLabel: cc.Label, // 木版上的字
         nodeScoreBoard: cc.Node, // 记分板节点组
         nodePauseInterface: cc.Node, // 暂停界面节点
+        ndDefeatInterface: cc.Node,  // 失败界面节点
         bgm: cc.AudioClip, // 背景音乐
         buttonClickAudio: cc.AudioClip,  // 按钮点击音效
         muteImg: [cc.SpriteFrame],  // 静音按钮图片, 0 为静音图标
-        nodeAudioButton: cc.Node  // 控制静音按钮
+        nodeAudioButton: cc.Node,  // 控制静音按钮
+        ndHealthPoint: cc.Node,  // 生命值节点组
     },
 
     // use this for initialization
     onLoad: function () {
+        if (cc.director.isPaused()) {  // 防止游戏加载时被暂停
+            cc.director.resume();
+        }
         this.audioSprite = this.nodeAudioButton.getComponent(cc.Sprite); // 获取声音按钮 Sprite 组件
         if (window.isMuted == undefined) {
             window.isMuted = false;
@@ -53,6 +58,16 @@ cc.Class({
         this.pauseButtonAction(); // 暂停动画
         this.lastMonkeyPosition = null; // 与苹果同时下来时，猴子的位置
         this.schedule(this.dropApple, 3); // 循环掉落苹果
+        this.ndHealthPointChildren = this.ndHealthPoint.children;  // 获取生命值子节点
+        this.healthPointAction(); // 播放生命值动画
+        this.healthPoint = 3; // 初始化生命值
+    },
+
+    // 生命值动画
+    healthPointAction: function () {
+        for (var i = 0; i < this.ndHealthPointChildren.length; i++) {
+            this.ndHealthPointChildren[i].runAction(cc.blink(3, 3));
+        }
     },
 
     // 根据数据动态调节记分板上需要的目标苹果数量
@@ -172,9 +187,12 @@ cc.Class({
     update: function (dt) {
         // 得到掉落的苹果并消除
         var dropApple = this.node.getChildByName("redApple" || "yellowApple" || "greenApple" || "peach" || "pear");
-        if (dropApple && dropApple.y < - this.gameHeight / 2 - dropApple.height / 2) {
+        if (dropApple && dropApple.y < - this.gameHeight / 2 - dropApple.height / 2 && this.healthPoint > 0) {
             dropApple.destroy();
-            console.log("dropApple destroy");
+            this.healthPoint--;
+            this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(1));
+        } else if (this.healthPoint <= 0) {
+            this.gameOver();
         }
     },
 
@@ -193,8 +211,8 @@ cc.Class({
         if (window.isMuted === false) {
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
-        this.nodePauseInterface.active = false; // 隐藏暂停界面
         this.pauseGame();
+        this.nodePauseInterface.active = false; // 隐藏暂停界面
     },
 
     // 过关界面点击继续按钮
@@ -203,7 +221,6 @@ cc.Class({
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
         cc.director.loadScene("game");
-        this.pauseGame();
     },
 
     // 重新开始界面
@@ -213,14 +230,12 @@ cc.Class({
         }
         window.levelNum = this.levelNum;  // 将关卡数恢复成当前关
         cc.director.loadScene("game");
-        this.pauseGame();
     },
 
     menuButtonClick: function () {
         if (window.isMuted === false) {
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
-        this.pauseGame();
         cc.director.loadScene("start");
     },
 
@@ -245,4 +260,9 @@ cc.Class({
             cc.director.pause();
         }
     },
+
+    gameOver: function () {
+        this.pauseGame();
+        this.ndDefeatInterface.active = true;
+    }
 });

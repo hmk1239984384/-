@@ -14,6 +14,9 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
+        if (cc.director.isPaused()) { // 防止游戏加载时被暂停
+            cc.director.resume();
+        }
         this.audioSprite = this.nodeAudioButton.getComponent(cc.Sprite); // 获取声音按钮 Sprite 组件
         if (window.isMuted == undefined) {
             window.isMuted = false;
