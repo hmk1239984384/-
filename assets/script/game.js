@@ -26,7 +26,7 @@ cc.Class({
         if (cc.director.isPaused()) {  // 防止游戏加载时被暂停
             cc.director.resume();
         }
-        this.audioAnim = this.nodeAudioButton.getComponent(cc.Animation);
+        this.audioAnim = this.nodeAudioButton.getComponent(cc.Animation);  // 获取静音按钮 Animation 组件
         if (window.isMuted == undefined) {
             window.isMuted = false;
             this.audioAnim.play();
