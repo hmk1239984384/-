@@ -17,7 +17,6 @@ cc.Class({
         ndDefeatInterface: cc.Node,  // 失败界面节点
         bgm: cc.AudioClip, // 背景音乐
         buttonClickAudio: cc.AudioClip,  // 按钮点击音效
-        muteImg: [cc.SpriteFrame],  // 静音按钮图片, 0 为静音图标
         nodeAudioButton: cc.Node,  // 控制静音按钮
         ndHealthPoint: cc.Node,  // 生命值节点组
     },
@@ -27,17 +26,17 @@ cc.Class({
         if (cc.director.isPaused()) {  // 防止游戏加载时被暂停
             cc.director.resume();
         }
-        this.audioSprite = this.nodeAudioButton.getComponent(cc.Sprite); // 获取声音按钮 Sprite 组件
+        this.audioAnim = this.nodeAudioButton.getComponent(cc.Animation);
         if (window.isMuted == undefined) {
             window.isMuted = false;
-            this.audioSprite.spriteFrame = this.muteImg[1];
+            this.audioAnim.play();
         }
         if (window.isMuted === false) {
-            this.audioSprite.spriteFrame = this.muteImg[1];
+            this.audioAnim.play();
             cc.audioEngine.stopAll(); // 防止音乐重叠
             this.bgmId = cc.audioEngine.play(this.bgm, true, 1);
         } else if (window.isMuted === true) {
-            this.audioSprite.spriteFrame = this.muteImg[0];
+            this.audioAnim.stop();
         }
         this.gameWidth = cc.winSize.width;
         this.gameHeight = cc.winSize.height;
@@ -239,15 +238,16 @@ cc.Class({
         cc.director.loadScene("start");
     },
 
+    // 静音按钮按下
     muteButtonClick: function () {
         if (window.isMuted === false) {
             window.isMuted = true;
             cc.audioEngine.stopAll();
-            this.audioSprite.spriteFrame = this.muteImg[0];
+            this.audioAnim.stop();
         } else {
             window.isMuted = false;
             cc.audioEngine.play(this.bgm, true, 1);
-            this.audioSprite.spriteFrame = this.muteImg[1];
+            this.audioAnim.play();
         }
     },
 
