@@ -19,6 +19,8 @@ cc.Class({
         buttonClickAudio: cc.AudioClip,  // 按钮点击音效
         nodeAudioButton: cc.Node,  // 控制静音按钮
         ndHealthPoint: cc.Node,  // 生命值节点组
+        failedAudio: cc.AudioClip, // 失败音效
+        nodeShadow: cc.Node, // 阴影节点
     },
 
     // use this for initialization
@@ -107,7 +109,7 @@ cc.Class({
     // 记分板下落动画
     scoreboardDownAction: function () {
         var action = cc.moveBy(1.2, cc.p(0, -230)).easing(cc.easeElasticOut(3));
-        var action1 = cc.moveBy(0.8, cc.p(0, 40)).easing(cc.easeElasticIn(3));
+        var action1 = cc.moveBy(0.8, cc.p(0, 40)).easing(cc.easeElasticIn());
         var action2 = cc.sequence(action, action1);
         this.nodeScoreBoard.runAction(action);
     },
@@ -189,7 +191,7 @@ cc.Class({
         if (dropApple && dropApple.y < - this.gameHeight / 2 - dropApple.height / 2 && this.healthPoint > 0) {
             dropApple.destroy();
             this.healthPoint--;
-            this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(1));
+            this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
         } else if (this.healthPoint <= 0) {
             this.gameOver();
         }
@@ -200,8 +202,12 @@ cc.Class({
         if (window.isMuted === false) {
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
+        this.nodeShadow.active = true; // 显示阴影
         this.nodePauseInterface.active = true; // 显示暂停界面
-        this.pauseGame(); // 暂停游戏
+        var action = cc.moveTo(0.3, cc.p(0, -20)).easing(cc.easeCircleActionOut());
+        var action1 = cc.moveTo(0.1, cc.p(0, 0)).easing(cc.easeCircleActionIn());
+        this.nodePauseInterface.runAction(cc.sequence(action, action1));
+        this.scheduleOnce(this.pauseGame, 0.5);
         this.pauseButton.active = false;
     },
 
@@ -211,7 +217,13 @@ cc.Class({
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
         this.pauseGame();
-        this.nodePauseInterface.active = false; // 隐藏暂停界面
+        var action = cc.moveTo(0.1, cc.p(0, -20)).easing(cc.easeCircleActionIn());
+        var action1 = cc.moveTo(0.3, cc.p(0, 600)).easing(cc.easeCircleActionOut());
+        this.nodePauseInterface.runAction(cc.sequence(action, action1));
+        this.scheduleOnce(function () {
+            this.nodeShadow.active = false;
+            this.nodePauseInterface.active = false; // 隐藏暂停界面
+        }, 0.4)
     },
 
     // 过关界面点击继续按钮
@@ -258,11 +270,21 @@ cc.Class({
             cc.director.resume();
         } else {
             cc.director.pause();
+
         }
     },
 
+    // 游戏失败界面显示
     gameOver: function () {
-        this.pauseGame();
+        this.nodeShadow.active = true;
         this.ndDefeatInterface.active = true;
+        var action = cc.moveTo(0.3, cc.p(0, -20)).easing(cc.easeCircleActionOut());
+        var action1 = cc.moveTo(0.1, cc.p(0, 0)).easing(cc.easeCircleActionIn());
+        this.ndDefeatInterface.runAction(cc.sequence(action, action1));
+        this.scheduleOnce(function () {
+            this.pauseGame();
+            cc.audioEngine.stopAll();
+            cc.audioEngine.play(this.failedAudio, false, 1);
+        })
     }
 });

@@ -12,6 +12,7 @@ cc.Class({
         pauseButton: cc.Node,
         gainScore: cc.Node,   // 苹果记分板
         getAppleAudio: cc.AudioClip,  // 获得苹果时音效
+        nodeShadow: cc.Node,  // 阴影节点
     },
 
     // use this for initialization
@@ -133,6 +134,8 @@ cc.Class({
         if (this.redAppleCount >= this.redAppleMaxNum && this.yellowAppleCount >= this.yellowAppleMaxNum && this.greenAppleCount >= this.greenAppleMaxNum && this.peachCount >= this.peachMaxNum && this.pearCount >= this.pearMaxNum && this.levelNum <= level.length) {
             this.levelNum += 1;
             window.levelNum = this.levelNum;
+            // 显示过关界面
+            this.nodeShadow.active = true;
             this.nodeContinueInterface.active = true;
             this.pauseButton.active = false;
             this.pauseGame();

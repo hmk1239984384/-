@@ -10,6 +10,7 @@ cc.Class({
         nodeAudioButton: cc.Node,  // 控制静音按钮
         startBgm: cc.AudioClip,  // 开始界面背景音乐
         choosePlayer: cc.Node,  // 选择角色节点组
+        loadingShadow: cc.Node,  // loading 界面遮罩
     },
 
     // use this for initialization
@@ -27,6 +28,7 @@ cc.Class({
             cc.audioEngine.stopAll(); // 防止音乐重叠
             cc.audioEngine.play(this.startBgm, true, 1);
         } else if (window.isMuted === true) {
+            cc.audioEngine.stopAll();
             this.audioAnim.stop();
         }
         // 开始游戏按钮动画
@@ -55,6 +57,7 @@ cc.Class({
         if (window.isMuted === false) {
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
+        this.loadingShadow.active = true;
         this.loadingAnim.play();
         this.scheduleOnce(function () {
             cc.director.loadScene("game");
