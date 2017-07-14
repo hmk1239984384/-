@@ -18,9 +18,11 @@ cc.Class({
         bgm: cc.AudioClip, // 背景音乐
         buttonClickAudio: cc.AudioClip,  // 按钮点击音效
         nodeAudioButton: cc.Node,  // 控制静音按钮
+        audioImg: [cc.SpriteFrame],  // 静音按钮图片，1 为静音图片
         ndHealthPoint: cc.Node,  // 生命值节点组
         failedAudio: cc.AudioClip, // 失败音效
         nodeShadow: cc.Node, // 阴影节点
+        appleNode:cc.Node,  // 存储苹果节点
     },
 
     // use this for initialization
@@ -28,17 +30,17 @@ cc.Class({
         if (cc.director.isPaused()) {  // 防止游戏加载时被暂停
             cc.director.resume();
         }
-        this.audioAnim = this.nodeAudioButton.getComponent(cc.Animation);  // 获取静音按钮 Animation 组件
+        this.audioSprite = this.nodeAudioButton.getComponent(cc.Sprite);  // 获取静音按钮 Sprite 组件
         if (window.isMuted == undefined) {
             window.isMuted = false;
-            this.audioAnim.play();
+            this.audioSprite.spriteFrame = this.audioImg[0];
         }
         if (window.isMuted === false) {
-            this.audioAnim.play();
+            this.audioSprite.spriteFrame = this.audioImg[0];
             cc.audioEngine.stopAll(); // 防止音乐重叠
             this.bgmId = cc.audioEngine.play(this.bgm, true, 1);
         } else if (window.isMuted === true) {
-            this.audioAnim.stop();
+            this.audioSprite.spriteFrame = this.audioImg[1];
         }
         this.gameWidth = cc.winSize.width;
         this.gameHeight = cc.winSize.height;
@@ -173,7 +175,7 @@ cc.Class({
                 appleSprite.spriteFrame = this.appleImg[4];
                 break;
         }
-        this.node.addChild(apple);
+        this.appleNode.addChild(apple);
         apple.setPosition(this.lastMonkeyPosition.x + 20, this.lastMonkeyPosition.y - 90);
         var down = cc.moveBy(2, cc.p(0, -180));
         var wait = cc.moveBy(0.8, cc.p(0, 0));
@@ -187,12 +189,37 @@ cc.Class({
     // called every frame, uncomment this function to activate update callback
     update: function (dt) {
         // 得到掉落的苹果并消除
-        var dropApple = this.node.getChildByName("redApple" || "yellowApple" || "greenApple" || "peach" || "pear");
-        if (dropApple && dropApple.y < - this.gameHeight / 2 - dropApple.height / 2 && this.healthPoint > 0) {
-            dropApple.destroy();
+        var dropApple1 = this.appleNode.getChildByName("redApple");
+        var dropApple2 = this.appleNode.getChildByName("yellowApple");
+        var dropApple3 = this.appleNode.getChildByName("greenApple");
+        var dropApple4 = this.appleNode.getChildByName("peach");
+        var dropApple5 = this.appleNode.getChildByName("pear");
+        if (dropApple1 && dropApple1.y < - this.gameHeight / 2 - dropApple1.height / 2 && this.healthPoint > 0) {
+            dropApple1.destroy();
             this.healthPoint--;
             this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
-        } else if (this.healthPoint <= 0) {
+        } 
+        if (dropApple2 && dropApple2.y < - this.gameHeight / 2 - dropApple2.height / 2 && this.healthPoint > 0) {
+            dropApple2.destroy();
+            this.healthPoint--;
+            this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
+        } 
+        if (dropApple3 && dropApple3.y < - this.gameHeight / 2 - dropApple3.height / 2 && this.healthPoint > 0) {
+            dropApple3.destroy();
+            this.healthPoint--;
+            this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
+        } 
+        if (dropApple4 && dropApple4.y < - this.gameHeight / 2 - dropApple4.height / 2 && this.healthPoint > 0) {
+            dropApple4.destroy();
+            this.healthPoint--;
+            this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
+        } 
+        if (dropApple5 && dropApple5.y < - this.gameHeight / 2 - dropApple5.height / 2 && this.healthPoint > 0) {
+            dropApple5.destroy();
+            this.healthPoint--;
+            this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
+        } 
+        if (this.healthPoint <= 0) {
             this.gameOver();
         }
     },
@@ -207,7 +234,7 @@ cc.Class({
         var action = cc.moveTo(0.3, cc.p(0, -20)).easing(cc.easeCircleActionOut());
         var action1 = cc.moveTo(0.1, cc.p(0, 0)).easing(cc.easeCircleActionIn());
         this.nodePauseInterface.runAction(cc.sequence(action, action1));
-        this.scheduleOnce(this.pauseGame, 0.5);
+        this.scheduleOnce(this.pauseGame, 0.4);
         this.pauseButton.active = false;
     },
 
@@ -255,11 +282,11 @@ cc.Class({
         if (window.isMuted === false) {
             window.isMuted = true;
             cc.audioEngine.stopAll();
-            this.audioAnim.stop();
+            this.audioSprite.spriteFrame = this.audioImg[1];
         } else {
             window.isMuted = false;
             cc.audioEngine.play(this.bgm, true, 1);
-            this.audioAnim.play();
+            this.audioSprite.spriteFrame = this.audioImg[0];
         }
     },
 

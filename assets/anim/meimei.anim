@@ -1,0 +1,43 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "meimei",
+  "_objFlags": 0,
+  "_rawFiles": null,
+  "_duration": 0.06666666666666667,
+  "sample": 60,
+  "speed": 0.06,
+  "wrapMode": 2,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "a4e5cfcd-35a8-48bf-84a6-2f7cf5e22d98"
+            }
+          },
+          {
+            "frame": 0.016666666666666666,
+            "value": {
+              "__uuid__": "7c66374d-50ee-4c6b-8ada-352e481715e1"
+            }
+          },
+          {
+            "frame": 0.03333333333333333,
+            "value": {
+              "__uuid__": "a7ec6580-2179-4ee5-a8a6-bd2b44decad2"
+            }
+          },
+          {
+            "frame": 0.05,
+            "value": {
+              "__uuid__": "a601e42f-0d07-4fe1-85ca-9b1095c42931"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "events": []
+}

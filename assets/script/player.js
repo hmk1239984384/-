@@ -34,7 +34,13 @@ cc.Class({
         this.greenAppleCount = 0;
         this.peachCount = 0;
         this.pearCount = 0;
-        this.playAnimByName("right0"); // 播放动画
+
+        this.selectedPlayer = window.selectedPlayer || 1;
+        if (this.selectedPlayer == 1) {
+            this.playAnimByName("right0"); // 播放动画
+        } else if (this.selectedPlayer == 2){
+            this.playAnimByName("meimei");
+        }
         this.levelNum = window.levelNum || 1; // 获取关卡数
         // 获取关卡中各种苹果需要的数量
         this.redAppleMaxNum = level[this.levelNum - 1].redAppleMaxNum;
