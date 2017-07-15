@@ -32,7 +32,7 @@ cc.Class({
         if (window.isMuted === false) {
             cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
-        var data = customEventData;
+        var data = customEventData - 0;  // 转换成数字
         window.levelNum = data;
         cc.director.loadScene("game");
     },
