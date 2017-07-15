@@ -22,7 +22,7 @@ cc.Class({
         ndHealthPoint: cc.Node,  // 生命值节点组
         failedAudio: cc.AudioClip, // 失败音效
         nodeShadow: cc.Node, // 阴影节点
-        appleNode:cc.Node,  // 存储苹果节点
+        appleNode: cc.Node,  // 存储苹果节点
     },
 
     // use this for initialization
@@ -38,7 +38,7 @@ cc.Class({
         if (window.isMuted === false) {
             this.audioSprite.spriteFrame = this.audioImg[0];
             cc.audioEngine.stopAll(); // 防止音乐重叠
-            this.bgmId = cc.audioEngine.play(this.bgm, true, 1);
+            cc.audioEngine.play(this.bgm, true, 1);
         } else if (window.isMuted === true) {
             this.audioSprite.spriteFrame = this.audioImg[1];
         }
@@ -198,7 +198,7 @@ cc.Class({
             dropApple1.destroy();
             this.healthPoint--;
             this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
-        } 
+        }
         if (dropApple2 && dropApple2.y < - this.gameHeight / 2 - dropApple2.height / 2 && this.healthPoint > 0) {
             dropApple2.destroy();
             this.healthPoint--;

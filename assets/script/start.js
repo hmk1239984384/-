@@ -73,7 +73,7 @@ cc.Class({
         this.loadingShadow.active = true;
         this.loadingAnim.play();
         this.scheduleOnce(function () {
-            cc.director.loadScene("game");
+            cc.director.loadScene("choose");
         }, 1);
     },
 
