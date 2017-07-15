@@ -5,7 +5,9 @@ cc.Class({
         buttonClickAudio: cc.AudioClip,  // 按钮音效
         bgm: cc.AudioClip,
         audioImg: [cc.SpriteFrame], // 静音按钮图片，1 为静音图片
-        nodeAudioButton: cc.Node,
+        nodeAudioButton: cc.Node,   // 音量按钮
+        numButton: [cc.Node],  // 各关卡节点
+        starImg: [cc.SpriteFrame],  // 星星图片, 0 为空心，1 为实心
     },
 
     // use this for initialization
@@ -25,6 +27,8 @@ cc.Class({
         } else if (window.isMuted === true) {
             this.audioSprite.spriteFrame = this.audioImg[1];
         }
+        this.starNum = JSON.parse(cc.sys.localStorage.getItem("starNum")) || [];
+        this.showStar();
     },
 
     // 选关按钮
@@ -52,9 +56,18 @@ cc.Class({
 
 
     // 回主界面按钮
-    homeButtonClick:function(){
+    homeButtonClick: function () {
         cc.director.loadScene("start");
-    }
+    },
+
+    // 显示星星
+    showStar: function () {
+        for (var i = 0; i < this.numButton.length; i++) {
+            for (var j = 0; j < this.starNum[i]; j++) {
+                this.numButton[i].children[j].getComponent(cc.Sprite).spriteFrame = this.starImg[1];
+            }
+        }
+    },
 
     // called every frame, uncomment this function to activate update callback
     // update: function (dt) {

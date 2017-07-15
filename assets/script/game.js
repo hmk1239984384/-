@@ -64,6 +64,9 @@ cc.Class({
         this.ndHealthPointChildren = this.ndHealthPoint.children;  // 获取生命值子节点
         this.healthPointAction(); // 播放生命值动画
         this.healthPoint = 3; // 初始化生命值
+        this.starNum = [];
+        this.starNum.length = level.length;
+        this.starNum = JSON.parse(cc.sys.localStorage.getItem("starNum"))|| [];
     },
 
     // 生命值动画
@@ -203,22 +206,22 @@ cc.Class({
             dropApple2.destroy();
             this.healthPoint--;
             this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
-        } 
+        }
         if (dropApple3 && dropApple3.y < - this.gameHeight / 2 - dropApple3.height / 2 && this.healthPoint > 0) {
             dropApple3.destroy();
             this.healthPoint--;
             this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
-        } 
+        }
         if (dropApple4 && dropApple4.y < - this.gameHeight / 2 - dropApple4.height / 2 && this.healthPoint > 0) {
             dropApple4.destroy();
             this.healthPoint--;
             this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
-        } 
+        }
         if (dropApple5 && dropApple5.y < - this.gameHeight / 2 - dropApple5.height / 2 && this.healthPoint > 0) {
             dropApple5.destroy();
             this.healthPoint--;
             this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
-        } 
+        }
         if (this.healthPoint <= 0) {
             this.gameOver();
         }
@@ -258,6 +261,8 @@ cc.Class({
         if (window.isMuted === false) {
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
+        this.starNum[this.levelNum - 1] = this.healthPoint;
+        cc.sys.localStorage.setItem("starNum",JSON.stringify(this.starNum));
         cc.director.loadScene("game");
     },
 

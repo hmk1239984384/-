@@ -38,7 +38,7 @@ cc.Class({
         this.selectedPlayer = window.selectedPlayer || 1;
         if (this.selectedPlayer == 1) {
             this.playAnimByName("right0"); // 播放动画
-        } else if (this.selectedPlayer == 2){
+        } else if (this.selectedPlayer == 2) {
             this.playAnimByName("meimei");
         }
         this.levelNum = window.levelNum || 1; // 获取关卡数
@@ -60,7 +60,6 @@ cc.Class({
 
     onDeviceMotionEvent: function (event) {
         this._acc.x = event.acc.x;
-        this._acc.y = event.acc.y;
     },
 
     // called every frame, uncomment this function to activate update callback
