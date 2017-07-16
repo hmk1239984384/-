@@ -69,6 +69,7 @@ cc.Class({
         this.starNum = JSON.parse(cc.sys.localStorage.getItem("starNum"))|| [];
     },
 
+
     // 生命值动画
     healthPointAction: function () {
         for (var i = 0; i < this.ndHealthPointChildren.length; i++) {

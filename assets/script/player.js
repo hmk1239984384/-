@@ -17,11 +17,21 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
-        // 开启重力感应
-        cc.inputManager.setAccelerometerEnabled(true);
-        cc.systemEvent.on(cc.SystemEvent.EventType.DEVICEMOTION, this.onDeviceMotionEvent, this);
+        var controlMethod = window.controlMethod || "devicemotion";
+        if (controlMethod == "devicemotion") {
+            // 开启重力感应
+            cc.inputManager.setAccelerometerEnabled(true);
+            cc.systemEvent.on(cc.SystemEvent.EventType.DEVICEMOTION, this.onDeviceMotionEvent, this);
+        } else if (controlMethod == "touch") {
+            // 开启触屏监听
+            this.Canvas = cc.find("Canvas");
+            this.Canvas.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
+            this.Canvas.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
+        }
+        // 获取屏幕大小
         var screenSize = cc.view.getVisibleSize();
         this._rangeX = screenSize.width / 2 + this.player.x / 3;
+        this.centerPointX = cc.winSize.width / 2;  // 相对于 Canvas 的中心点坐标的 X
         // 获取角色动画组件
         this.playerAnim = this.player.getComponent(cc.Animation);
         this.lastAnimName = null; // 初始化上一个播放的动画名字
@@ -34,7 +44,7 @@ cc.Class({
         this.greenAppleCount = 0;
         this.peachCount = 0;
         this.pearCount = 0;
-
+        // 判断选择的人物
         this.selectedPlayer = window.selectedPlayer || 1;
         if (this.selectedPlayer == 1) {
             this.playAnimByName("right0"); // 播放动画
@@ -53,13 +63,49 @@ cc.Class({
     },
 
     onDestroy: function () {
-        cc.inputManager.setAccelerometerEnabled(false);
-        cc.systemEvent.off(cc.SystemEvent.EventType.DEVICEMOTION, this.onDeviceMotionEvent, this);
+        if (controlMethod == "devicemotion") {
+            cc.inputManager.setAccelerometerEnabled(false);
+            cc.systemEvent.off(cc.SystemEvent.EventType.DEVICEMOTION, this.onDeviceMotionEvent, this);
+        }
+        else if (controlMethod == "touch") {
+            this.Canvas.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
+            this.Canvas.off(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
+        }
         this.playerAnim.stop();
     },
 
     onDeviceMotionEvent: function (event) {
         this._acc.x = event.acc.x;
+    },
+
+    onTouchStart: function (event) {
+        this.touchX = event.getLocationX();
+        this._acc.x = 0;
+        this.addSpeed = function () {
+            if (this.touchX >= this.centerPointX) {
+                this._acc.x += 0.01;
+                this._acc.x = cc.clampf(this._acc.x, 0, 1);
+            } else if (this.touchX < this.centerPointX) {
+                this._acc.x -= 0.01;
+                this._acc.x = cc.clampf(this._acc.x, -1, 0);
+            }
+        }
+        this.unschedule(this.minusSpeed);
+        this.schedule(this.addSpeed, 0.01);
+    },
+
+    onTouchEnd: function () {
+        this.minusSpeed = function () {
+            if (this.touchX >= this.centerPointX) {
+                this._acc.x -= 0.01;
+                this._acc.x = cc.clampf(this._acc.x, 0, 1)
+            } else if (this.touchX < this.centerPointX) {
+                this._acc.x += 0.01;
+                this._acc.x = cc.clampf(this._acc.x, -1, 0);
+            }
+        }
+        this.unschedule(this.addSpeed);
+        this.schedule(this.minusSpeed, 0.01);
     },
 
     // called every frame, uncomment this function to activate update callback
@@ -68,7 +114,7 @@ cc.Class({
         this._time += 2;
         this.playerMove = this._acc.x * dt * (this.speed + this._time);
         player.x += this.playerMove;
-        if (this.playerMove >= 0) {
+        if (this.playerMove > 0) {
             this.player.scaleX = 1;
         } else if (this.playerMove < 0) {
             this.player.scaleX = -1;

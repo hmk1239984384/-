@@ -16,6 +16,7 @@ cc.Class({
         playerList: [cc.Node],  // 角色列表
         player: cc.Node,  // 使用中的角色
         playerImg: [cc.SpriteFrame],  // 角色图片
+        settingLabel: cc.Label, // 设置按钮
     },
 
     // use this for initialization
@@ -54,6 +55,14 @@ cc.Class({
         } else if (this.selectedPlayer == 2) {
             this.playerSprite.spriteFrame = this.playerImg[1];
         }
+        // 初始化操作方式        
+        this.controlMethod = window.controlMethod || "devicemotion";
+        if (this.controlMethod == "devicemotion") {
+            this.settingLabel.string = "重力感应";
+        } else if (this.controlMethod == "touch") {
+            this.settingLabel.string = "触摸";
+        }
+        window.controlMethod = this.controlMethod;
     },
 
     // 获取按钮数据
@@ -152,6 +161,24 @@ cc.Class({
                 this.selectedPlayer = 2;
                 window.selectedPlayer = this.selectedPlayer;
                 break;
+        }
+    },
+
+    // 设置按钮
+    settingButtonClick: function () {
+        if (this.controlMethod == "devicemotion") {
+            this.controlMethod = "touch";
+            window.controlMethod = this.controlMethod;
+            console.log("change to \"Touch\"");
+        } else if (this.controlMethod == "touch") {
+            this.controlMethod = "devicemotion";
+            window.controlMethod = this.controlMethod;
+            console.log("change to \"Devicemotion\"");
+        }
+        if (this.controlMethod == "devicemotion") {
+            this.settingLabel.string = "重力感应";
+        } else if (this.controlMethod == "touch") {
+            this.settingLabel.string = "触摸";
         }
     },
 
