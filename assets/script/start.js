@@ -74,9 +74,6 @@ cc.Class({
             this.settingChildren[1].runAction(this.touchAciton);
         }
         window.controlMethod = this.controlMethod;
-
-        // 预加载下一个场景
-        cc.director.preloadScene("choose");
     },
 
     // 获取按钮数据
