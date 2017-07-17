@@ -66,7 +66,7 @@ cc.Class({
         this.healthPoint = 3; // 初始化生命值
         this.starNum = [];
         this.starNum.length = level.length;
-        this.starNum = JSON.parse(cc.sys.localStorage.getItem("starNum"))|| [];
+        this.starNum = JSON.parse(cc.sys.localStorage.getItem("starNum")) || [];
     },
 
 
@@ -262,8 +262,7 @@ cc.Class({
         if (window.isMuted === false) {
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
-        this.starNum[this.levelNum - 1] = this.healthPoint;
-        cc.sys.localStorage.setItem("starNum",JSON.stringify(this.starNum));
+        this.getStar();
         cc.director.loadScene("game");
     },
 
@@ -276,9 +275,13 @@ cc.Class({
         cc.director.loadScene("game");
     },
 
-    menuButtonClick: function () {
+    // 返回主界面按钮
+    menuButtonClick: function (event, customEventData) {
         if (window.isMuted === false) {
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
+        }
+        if (customEventData == "next") {  // 当出现的是过关界面时，点击菜单也能记分
+            this.getStar();
         }
         cc.director.loadScene("start");
     },
@@ -319,5 +322,16 @@ cc.Class({
             cc.audioEngine.stopAll();
             cc.audioEngine.play(this.failedAudio, false, 1);
         })
-    }
+    },
+
+    // 记分方法
+    getStar: function () {
+        if (this.starNum[this.levelNum - 1] == undefined) {  // 不存在最高分时，记分
+            this.starNum[this.levelNum - 1] = this.healthPoint;
+            cc.sys.localStorage.setItem("starNum", JSON.stringify(this.starNum));
+        } else if (this.starNum[this.levelNum - 1] && this.healthPoint > this.starNum[this.levelNum - 1]) {  // 最高分低于当前分时，记分
+            this.starNum[this.levelNum - 1] = this.healthPoint;
+            cc.sys.localStorage.setItem("starNum", JSON.stringify(this.starNum));
+        }
+    },
 });

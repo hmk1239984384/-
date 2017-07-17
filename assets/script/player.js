@@ -17,12 +17,12 @@ cc.Class({
 
     // use this for initialization
     onLoad: function () {
-        var controlMethod = window.controlMethod || "devicemotion";
-        if (controlMethod == "devicemotion") {
+        this.controlMethod = window.controlMethod || "devicemotion";
+        if (this.controlMethod == "devicemotion") {
             // 开启重力感应
             cc.inputManager.setAccelerometerEnabled(true);
             cc.systemEvent.on(cc.SystemEvent.EventType.DEVICEMOTION, this.onDeviceMotionEvent, this);
-        } else if (controlMethod == "touch") {
+        } else if (this.controlMethod == "touch") {
             // 开启触屏监听
             this.Canvas = cc.find("Canvas");
             this.Canvas.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
@@ -63,11 +63,11 @@ cc.Class({
     },
 
     onDestroy: function () {
-        if (controlMethod == "devicemotion") {
+        if (this.controlMethod == "devicemotion") {
             cc.inputManager.setAccelerometerEnabled(false);
             cc.systemEvent.off(cc.SystemEvent.EventType.DEVICEMOTION, this.onDeviceMotionEvent, this);
         }
-        else if (controlMethod == "touch") {
+        else if (this.controlMethod == "touch") {
             this.Canvas.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
             this.Canvas.off(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
         }
@@ -80,6 +80,7 @@ cc.Class({
 
     onTouchStart: function (event) {
         this.touchX = event.getLocationX();
+        this.touchY = event.getLocationY();
         this._acc.x = 0;
         this.addSpeed = function () {
             if (this.touchX >= this.centerPointX) {
@@ -182,9 +183,11 @@ cc.Class({
 
     passBarrier: function () {
         // 过关判定
-        if (this.redAppleCount >= this.redAppleMaxNum && this.yellowAppleCount >= this.yellowAppleMaxNum && this.greenAppleCount >= this.greenAppleMaxNum && this.peachCount >= this.peachMaxNum && this.pearCount >= this.pearMaxNum && this.levelNum <= level.length) {
-            this.levelNum += 1;
-            window.levelNum = this.levelNum;
+        if (this.redAppleCount >= this.redAppleMaxNum && this.yellowAppleCount >= this.yellowAppleMaxNum && this.greenAppleCount >= this.greenAppleMaxNum && this.peachCount >= this.peachMaxNum && this.pearCount >= this.pearMaxNum) {
+            if (this.levelNum < level.length) {
+                this.levelNum += 1;
+                window.levelNum = this.levelNum;
+            }
             // 显示过关界面
             this.nodeShadow.active = true;
             this.nodeContinueInterface.active = true;

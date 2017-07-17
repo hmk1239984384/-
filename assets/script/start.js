@@ -58,9 +58,9 @@ cc.Class({
         // 初始化操作方式        
         this.controlMethod = window.controlMethod || "devicemotion";
         if (this.controlMethod == "devicemotion") {
-            this.settingLabel.string = "重力感应";
+            this.settingLabel.string = "当前：重力感应";
         } else if (this.controlMethod == "touch") {
-            this.settingLabel.string = "触摸";
+            this.settingLabel.string = "当前：触摸";
         }
         window.controlMethod = this.controlMethod;
     },
@@ -169,16 +169,14 @@ cc.Class({
         if (this.controlMethod == "devicemotion") {
             this.controlMethod = "touch";
             window.controlMethod = this.controlMethod;
-            console.log("change to \"Touch\"");
         } else if (this.controlMethod == "touch") {
             this.controlMethod = "devicemotion";
             window.controlMethod = this.controlMethod;
-            console.log("change to \"Devicemotion\"");
         }
         if (this.controlMethod == "devicemotion") {
-            this.settingLabel.string = "重力感应";
+            this.settingLabel.string = "当前：重力感应";
         } else if (this.controlMethod == "touch") {
-            this.settingLabel.string = "触摸";
+            this.settingLabel.string = "当前：触摸";
         }
     },
 

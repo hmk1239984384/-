@@ -4406,7 +4406,7 @@
     },
     "component": "game",
     "handler": "menuButtonClick",
-    "customEventData": ""
+    "customEventData": "next"
   },
   {
     "__type__": "cc.Animation",
