@@ -16,7 +16,7 @@ cc.Class({
         playerList: [cc.Node],  // 角色列表
         player: cc.Node,  // 使用中的角色
         playerImg: [cc.SpriteFrame],  // 角色图片
-        settingLabel: cc.Label, // 设置按钮
+        settingButtonNode: cc.Node,  // 设置按钮节点组
     },
 
     // use this for initialization
@@ -43,8 +43,8 @@ cc.Class({
         var action2 = cc.sequence(action, action1);
         this.btPlay.runAction(cc.repeatForever(action2));
         // 摇手机提示动画
-        var action3 = cc.rotateBy(2, -30).easing(cc.easeCubicActionIn(30));
-        var action4 = cc.rotateBy(2, 30).easing(cc.easeCubicActionIn(30));
+        var action3 = cc.rotateTo(2, -30).easing(cc.easeCubicActionIn(30));
+        var action4 = cc.rotateTo(2, 0).easing(cc.easeCubicActionIn(30));
         var action5 = cc.repeatForever(cc.sequence(action3, action4));
         this.phoneImg.runAction(action5);
         // 初始化角色
@@ -55,12 +55,23 @@ cc.Class({
         } else if (this.selectedPlayer == 2) {
             this.playerSprite.spriteFrame = this.playerImg[1];
         }
+        // 重力感应时的图标动画
+        var action6 = cc.rotateTo(1, -10).easing(cc.easeCubicActionIn());
+        var action7 = cc.rotateTo(1, 10).easing(cc.easeCubicActionIn());
+        this.devicemotionAction = cc.repeatForever(cc.sequence(action6, action7));
+        // 触摸操作时的图标动画
+        var action8 = cc.scaleTo(1, 0.8);
+        var action9 = cc.scaleTo(1, 1.2);
+        this.touchAciton = cc.repeatForever(cc.sequence(action8, action9));
         // 初始化操作方式        
         this.controlMethod = window.controlMethod || "devicemotion";
+        this.settingChildren = this.settingButtonNode.children; // 获取设置按钮子节点
         if (this.controlMethod == "devicemotion") {
-            this.settingLabel.string = "当前：重力感应";
+            this.settingChildren[1].active = false;
+            this.settingChildren[0].runAction(this.devicemotionAction);
         } else if (this.controlMethod == "touch") {
-            this.settingLabel.string = "当前：触摸";
+            this.settingChildren[1].active = true;
+            this.settingChildren[1].runAction(this.touchAciton);
         }
         window.controlMethod = this.controlMethod;
     },
@@ -174,9 +185,13 @@ cc.Class({
             window.controlMethod = this.controlMethod;
         }
         if (this.controlMethod == "devicemotion") {
-            this.settingLabel.string = "当前：重力感应";
+            this.settingChildren[1].active = false;
+            this.settingChildren[1].stopAction(this.touchAciton);
+            this.settingChildren[0].runAction(this.devicemotionAction);
         } else if (this.controlMethod == "touch") {
-            this.settingLabel.string = "当前：触摸";
+            this.settingChildren[1].active = true;
+            this.settingChildren[0].stopAction(this.devicemotionAction);
+            this.settingChildren[1].runAction(this.touchAciton);
         }
     },
 
