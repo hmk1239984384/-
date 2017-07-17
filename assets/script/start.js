@@ -2,7 +2,7 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        loadingAnim: cc.Animation, // loading Node
+        loadingNode: cc.Node, // loading Node
         btPlay: cc.Node,
         noHelpFace: cc.Node,
         phoneImg: cc.Node,  // 摇晃手机动画节点
@@ -74,6 +74,9 @@ cc.Class({
             this.settingChildren[1].runAction(this.touchAciton);
         }
         window.controlMethod = this.controlMethod;
+
+        // 预加载下一个场景
+        cc.director.preloadScene("choose");
     },
 
     // 获取按钮数据
@@ -91,10 +94,19 @@ cc.Class({
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
         this.loadingShadow.active = true;
-        this.loadingAnim.play();
+        this.loadingNode.active = true;
+        if (this.selectedPlayer == 1) {
+            this.loadingNode.children[0].getComponent(cc.Animation).play("right0");
+        } else if (this.selectedPlayer == 2) {
+            this.loadingNode.children[0].getComponent(cc.Animation).play("meimei");
+        }
+        var action = cc.moveBy(0.5,cc.p(200,0));
+        var action1 = cc.moveBy(0.4,cc.p(100,0));
+        var action2 = cc.moveBy(0.4,cc.p(200,0));
+        this.loadingNode.children[0].runAction(cc.sequence(action,action1,action2));
         this.scheduleOnce(function () {
             cc.director.loadScene("choose");
-        }, 1);
+        }, 1.3);
     },
 
     // 显示帮助界面

@@ -13,6 +13,8 @@ cc.Class({
         gainScore: cc.Node,   // 苹果记分板
         getAppleAudio: cc.AudioClip,  // 获得苹果时音效
         nodeShadow: cc.Node,  // 阴影节点
+        directorButton: cc.Node, // 存放方向图片节点
+        directorButtonImg: [cc.SpriteFrame],  // 方向图片
     },
 
     // use this for initialization
@@ -31,7 +33,7 @@ cc.Class({
         // 获取屏幕大小
         var screenSize = cc.view.getVisibleSize();
         this._rangeX = screenSize.width / 2 + this.player.x / 3;
-        this.centerPointX = cc.winSize.width / 2;  // 相对于 Canvas 的中心点坐标的 X
+        this.centerPoint = cc.p(cc.winSize.width / 2, cc.winSize.height / 2);  // 相对于 Canvas 的中心点坐标
         // 获取角色动画组件
         this.playerAnim = this.player.getComponent(cc.Animation);
         this.lastAnimName = null; // 初始化上一个播放的动画名字
@@ -79,14 +81,22 @@ cc.Class({
     },
 
     onTouchStart: function (event) {
-        this.touchX = event.getLocationX();
-        this.touchY = event.getLocationY();
+        var touchPosition = event.getLocation();
+        this.touchX = touchPosition.x;
         this._acc.x = 0;
+        var buttonPosition = cc.p(touchPosition.x - this.centerPoint.x , touchPosition.y - this.centerPoint.y); // 计算出 button 的位置
+        this.directorButton.active = true;
+        if (buttonPosition.x >= 0) {
+            this.directorButton.getComponent(cc.Sprite).spriteFrame = this.directorButtonImg[0];
+        } else if (buttonPosition.x < 0) {
+            this.directorButton.getComponent(cc.Sprite).spriteFrame = this.directorButtonImg[1];
+        }
+        this.directorButton.position = buttonPosition;
         this.addSpeed = function () {
-            if (this.touchX >= this.centerPointX) {
+            if (this.touchX >= this.centerPoint.x) {
                 this._acc.x += 0.01;
                 this._acc.x = cc.clampf(this._acc.x, 0, 1);
-            } else if (this.touchX < this.centerPointX) {
+            } else if (this.touchX < this.centerPoint.x) {
                 this._acc.x -= 0.01;
                 this._acc.x = cc.clampf(this._acc.x, -1, 0);
             }
@@ -96,11 +106,12 @@ cc.Class({
     },
 
     onTouchEnd: function () {
+        this.directorButton.active = false;
         this.minusSpeed = function () {
-            if (this.touchX >= this.centerPointX) {
+            if (this.touchX >= this.centerPoint.x) {
                 this._acc.x -= 0.01;
                 this._acc.x = cc.clampf(this._acc.x, 0, 1)
-            } else if (this.touchX < this.centerPointX) {
+            } else if (this.touchX < this.centerPoint.x) {
                 this._acc.x += 0.01;
                 this._acc.x = cc.clampf(this._acc.x, -1, 0);
             }

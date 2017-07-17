@@ -29,6 +29,8 @@ cc.Class({
         }
         this.starNum = JSON.parse(cc.sys.localStorage.getItem("starNum")) || [];
         this.showStar();
+        // 预加载下一场景
+        cc.director.preloadScene("game");
     },
 
     // 选关按钮
