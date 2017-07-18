@@ -263,6 +263,7 @@ cc.Class({
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
         this.getStar();
+        cc.director.resume();
         cc.director.loadScene("game");
     },
 
@@ -272,6 +273,7 @@ cc.Class({
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
         window.levelNum = this.levelNum;  // 将关卡数恢复成当前关
+        cc.director.resume();
         cc.director.loadScene("game");
     },
 
@@ -283,6 +285,7 @@ cc.Class({
         if (customEventData == "next") {  // 当出现的是过关界面时，点击菜单也能记分
             this.getStar();
         }
+        cc.director.resume();
         cc.director.loadScene("start");
     },
 

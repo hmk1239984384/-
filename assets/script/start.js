@@ -42,11 +42,6 @@ cc.Class({
         var action1 = cc.rotateBy(1, -20).easing(cc.easeCubicActionOut(30));
         var action2 = cc.sequence(action, action1);
         this.btPlay.runAction(cc.repeatForever(action2));
-        // 摇手机提示动画
-        var action3 = cc.rotateTo(2, -30).easing(cc.easeCubicActionIn(30));
-        var action4 = cc.rotateTo(2, 0).easing(cc.easeCubicActionIn(30));
-        var action5 = cc.repeatForever(cc.sequence(action3, action4));
-        this.phoneImg.runAction(action5);
         // 初始化角色
         this.selectedPlayer = window.selectedPlayer || 1;
         this.playerSprite = this.player.getComponent(cc.Sprite); // 获取角色的 sprite 组件
@@ -97,10 +92,10 @@ cc.Class({
         } else if (this.selectedPlayer == 2) {
             this.loadingNode.children[0].getComponent(cc.Animation).play("meimei");
         }
-        var action = cc.moveBy(0.5,cc.p(200,0));
-        var action1 = cc.moveBy(0.4,cc.p(100,0));
-        var action2 = cc.moveBy(0.4,cc.p(200,0));
-        this.loadingNode.children[0].runAction(cc.sequence(action,action1,action2));
+        var action = cc.moveBy(0.5, cc.p(200, 0));
+        var action1 = cc.moveBy(0.4, cc.p(100, 0));
+        var action2 = cc.moveBy(0.4, cc.p(200, 0));
+        this.loadingNode.children[0].runAction(cc.sequence(action, action1, action2));
         this.scheduleOnce(function () {
             cc.director.loadScene("choose");
         }, 1.3);
@@ -117,6 +112,19 @@ cc.Class({
         this.phoneImg.rotation = 0;
         if (this.noHelpFace.active === false) {
             this.noHelpFace.active = true;
+            if (this.controlMethod == "devicemotion") {
+                this.noHelpFace.children[1].active = true;
+                this.noHelpFace.children[2].active = false;
+                // 摇手机提示动画
+                var action3 = cc.rotateTo(2, -30).easing(cc.easeCubicActionIn(30));
+                var action4 = cc.rotateTo(2, 0).easing(cc.easeCubicActionIn(30));
+                var action5 = cc.repeatForever(cc.sequence(action3, action4));
+                this.phoneImg.runAction(action5);
+            } else if (this.controlMethod == "touch") {
+                this.noHelpFace.children[2].active = true;
+                this.noHelpFace.children[1].active = false;
+                this.phoneImg.stopAction(action5);
+            }
         } else if (this.noHelpFace.active === true) {
             if (this.btEventData == "help") {
                 this.noHelpFace.active = false;
@@ -124,6 +132,8 @@ cc.Class({
                 this.noHelpFace.active = false;
                 this.changeScene();
             }
+            this.noHelpFace.children[1].active = false;
+            this.noHelpFace.children[2].active = false;
         }
     },
 
