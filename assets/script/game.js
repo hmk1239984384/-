@@ -23,6 +23,7 @@ cc.Class({
         failedAudio: cc.AudioClip, // 失败音效
         nodeShadow: cc.Node, // 阴影节点
         appleNode: cc.Node,  // 存储苹果节点
+        targetBoard: cc.Node,  // 目标木牌
     },
 
     // use this for initialization
@@ -46,7 +47,7 @@ cc.Class({
         this.gameHeight = cc.winSize.height;
         this.leaves.zIndex = 2; // 将树叶遮罩放在猴子上层
         this.levelNum = window.levelNum || 1; // 获取关卡数
-        this.levelLabel.string = "Level " + this.levelNum; // 更改记分板上关卡显示
+        this.levelLabel.string = "第 " + this.levelNum + " 关"; // 更改记分板上关卡显示
         this.appleTypeNum = level[this.levelNum - 1].appleTypeNum;// 苹果种类数量
         // 获取关卡中各种苹果需要的数量
         this.redAppleMaxNum = level[this.levelNum - 1].redAppleMaxNum;
@@ -54,61 +55,82 @@ cc.Class({
         this.greenAppleMaxNum = level[this.levelNum - 1].greenAppleMaxNum;
         this.peachMaxNum = level[this.levelNum - 1].peachMaxNum;
         this.pearMaxNum = level[this.levelNum - 1].pearMaxNum;
-        // 获取每种苹果的节点组
-        this.scoreChildren = this.gainScore.children;
-        this.changeAppleNum();// 根据数据动态调节记分板上需要的目标苹果数量
-        this.scoreboardDownAction(); // 记分板动画
-        this.pauseButtonAction(); // 暂停动画
-        this.lastMonkeyPosition = null; // 与苹果同时下来时，猴子的位置
-        this.schedule(this.dropApple, 3); // 循环掉落苹果
         this.ndHealthPointChildren = this.ndHealthPoint.children;  // 获取生命值子节点
-        this.healthPointAction(); // 播放生命值动画
-        this.healthPoint = 3; // 初始化生命值
-        this.starNum = [];
+        this.starNum = [];  // 初始化分数
         this.starNum.length = level.length;
         this.starNum = JSON.parse(cc.sys.localStorage.getItem("starNum")) || [];
+        this.showTarget();  // 显示当前关卡目标
     },
 
+    // 开始游戏初始化
+    loadGame: function () {
+        this.changeAppleNum("gainScore");// 根据数据动态调节记分板上需要的目标苹果数量
+        this.scoreboardDownAction(); // 记分板动画
+        this.pauseButtonAction(); // 暂停按钮动画
+        this.lastMonkeyPosition = null; // 与苹果同时下来时，猴子的位置
+        this.schedule(this.dropApple, 3); // 循环掉落苹果
+        this.healthPoint = 3; // 初始化生命值
+        this.healthPointAction(); // 播放生命值动画
+    },
+
+    // 显示目标
+    showTarget: function () {
+        this.targetBoard.active = true;
+        this.changeAppleNum("targetFirst");
+    },
+
+    // start game
+    startGame:function(){
+        this.targetBoard.active = false;
+        this.loadGame();
+    },
 
     // 生命值动画
     healthPointAction: function () {
         for (var i = 0; i < this.ndHealthPointChildren.length; i++) {
+            this.ndHealthPointChildren[i].active = true;
             this.ndHealthPointChildren[i].runAction(cc.blink(3, 3));
         }
     },
 
-    // 根据数据动态调节记分板上需要的目标苹果数量
-    changeAppleNum: function () {
+    // 根据数据动态调节记分板上需要的目标苹果数量，并闪烁
+    changeAppleNum: function (target) {
+        // 获取每种苹果的节点组
+        if (target == "gainScore") {
+            var scoreChildren = this.gainScore.children;
+        } else if (target == "targetFirst") {
+            var scoreChildren = this.targetBoard.children[2].children;
+        }
         var allAppleNum = this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum + this.peachMaxNum + this.pearMaxNum;
         // 设置苹果
         for (var i = 0; i < allAppleNum; i++) {
-            this.scoreChildren[i].active = true;
-            this.scoreChildren[i].opacity = 70;
+            scoreChildren[i].active = true;
+            scoreChildren[i].opacity = 70;
         }
         for (var j = 0; j < this.redAppleMaxNum; j++) {
-            var appleSprite = this.scoreChildren[j].getComponent(cc.Sprite);
+            var appleSprite = scoreChildren[j].getComponent(cc.Sprite);
             appleSprite.spriteFrame = this.appleImg[0];
-            this.scoreChildren[j].runAction(cc.blink(4, 4));
+            scoreChildren[j].runAction(cc.blink(4, 4));
         }
         for (var k = this.redAppleMaxNum; k < this.redAppleMaxNum + this.yellowAppleMaxNum; k++) {
-            var appleSprite = this.scoreChildren[k].getComponent(cc.Sprite);
+            var appleSprite = scoreChildren[k].getComponent(cc.Sprite);
             appleSprite.spriteFrame = this.appleImg[1];
-            this.scoreChildren[k].runAction(cc.blink(4, 4));
+            scoreChildren[k].runAction(cc.blink(4, 4));
         }
         for (var l = this.redAppleMaxNum + this.yellowAppleMaxNum; l < this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum; l++) {
-            var appleSprite = this.scoreChildren[l].getComponent(cc.Sprite);
+            var appleSprite = scoreChildren[l].getComponent(cc.Sprite);
             appleSprite.spriteFrame = this.appleImg[2];
-            this.scoreChildren[l].runAction(cc.blink(4, 4));
+            scoreChildren[l].runAction(cc.blink(4, 4));
         }
         for (var m = this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum; m < this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum + this.peachMaxNum; m++) {
-            var appleSprite = this.scoreChildren[m].getComponent(cc.Sprite);
+            var appleSprite = scoreChildren[m].getComponent(cc.Sprite);
             appleSprite.spriteFrame = this.appleImg[3];
-            this.scoreChildren[m].runAction(cc.blink(4, 4));
+            scoreChildren[m].runAction(cc.blink(4, 4));
         }
         for (var n = this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum + this.peachMaxNum; n < this.redAppleMaxNum + this.yellowAppleMaxNum + this.greenAppleMaxNum + this.peachMaxNum + this.pearMaxNum; n++) {
-            var appleSprite = this.scoreChildren[n].getComponent(cc.Sprite);
+            var appleSprite = scoreChildren[n].getComponent(cc.Sprite);
             appleSprite.spriteFrame = this.appleImg[4];
-            this.scoreChildren[n].runAction(cc.blink(4, 4));
+            scoreChildren[n].runAction(cc.blink(4, 4));
         }
     },
 
