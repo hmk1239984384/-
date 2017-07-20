@@ -15,6 +15,7 @@ cc.Class({
         nodeShadow: cc.Node,  // 阴影节点
         directorButton: cc.Node, // 存放方向图片节点
         directorButtonImg: [cc.SpriteFrame],  // 方向图片
+        ndHealthPoint: cc.Node,  // 生命值节点组
     },
 
     // use this for initialization
@@ -62,6 +63,7 @@ cc.Class({
         this.pearMaxNum = level[this.levelNum - 1].pearMaxNum;
         // 获取每种苹果的节点组
         this.scoreChildren = this.gainScore.children;
+        this. ndHealthPointChildren = this.ndHealthPoint.children;
     },
 
     onDestroy: function () {
@@ -84,7 +86,7 @@ cc.Class({
         var touchPosition = event.getLocation();
         this.touchX = touchPosition.x;
         this._acc.x = 0;
-        var buttonPosition = cc.p(touchPosition.x - this.centerPoint.x , touchPosition.y - this.centerPoint.y); // 计算出 button 的位置
+        var buttonPosition = cc.p(touchPosition.x - this.centerPoint.x, touchPosition.y - this.centerPoint.y); // 计算出 button 的位置
         this.directorButton.active = true;
         if (buttonPosition.x >= 0) {
             this.directorButton.getComponent(cc.Sprite).spriteFrame = this.directorButtonImg[0];
@@ -150,20 +152,18 @@ cc.Class({
     onCollisionEnter: function (other, self) {
         if (other.node.name == "redApple") {
             this.redAppleCount += 1;
-        }
-        if (other.node.name == "yellowApple") {
+        } else if (other.node.name == "yellowApple") {
             this.yellowAppleCount += 1;
-        }
-        if (other.node.name == "greenApple") {
+        } else if (other.node.name == "greenApple") {
             this.greenAppleCount += 1;
-        }
-        if (other.node.name == "peach") {
+        } else if (other.node.name == "peach") {
             this.peachCount += 1;
-        }
-        if (other.node.name == "pear") {
+        } else if (other.node.name == "pear") {
             this.pearCount += 1;
+        } else if (other.node.name == "badApple") {
+            window.healthPoint--;
+            this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
         }
-
         other.node.destroy();
         if (window.isMuted === false) {
             cc.audioEngine.play(this.getAppleAudio, false, 0.8);

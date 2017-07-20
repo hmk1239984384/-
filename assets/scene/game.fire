@@ -1831,7 +1831,10 @@
       {
         "__uuid__": "3a996a1b-d15e-432f-999f-e9a3e92481b5"
       }
-    ]
+    ],
+    "ndHealthPoint": {
+      "__id__": 51
+    }
   },
   {
     "__type__": "cc.Node",
@@ -6205,9 +6208,65 @@
     "monkey": {
       "__id__": 7
     },
+    "gainScore": {
+      "__id__": 14
+    },
+    "pauseButton": {
+      "__id__": 58
+    },
+    "playerNode": {
+      "__id__": 42
+    },
+    "leaves": {
+      "__id__": 9
+    },
+    "nodeScoreBoard": {
+      "__id__": 11
+    },
+    "nodePauseInterface": {
+      "__id__": 104
+    },
+    "ndDefeatInterface": {
+      "__id__": 121
+    },
+    "nodeAudioButton": {
+      "__id__": 47
+    },
+    "ndHealthPoint": {
+      "__id__": 51
+    },
+    "nodeShadow": {
+      "__id__": 101
+    },
+    "appleNode": {
+      "__id__": 152
+    },
+    "targetBoard": {
+      "__id__": 64
+    },
+    "levelLabel": {
+      "__id__": 13
+    },
+    "bgm": {
+      "__uuid__": "7a8f2296-7c2c-4cbf-9467-4bf4c17cbd9a"
+    },
+    "buttonClickAudio": {
+      "__uuid__": "5f75835d-fe58-4d26-84ea-bc33e8eb68e4"
+    },
+    "failedAudio": {
+      "__uuid__": "1a0c0b39-648a-4264-85dd-33b0dd8f5af4"
+    },
     "applePrefab": {
       "__uuid__": "5f6f267e-5239-4955-82d1-b1d2513b0786"
     },
+    "audioImg": [
+      {
+        "__uuid__": "378467e3-77c0-447a-9efe-d2d269d03062"
+      },
+      {
+        "__uuid__": "acf62b16-2c2d-45f9-99f4-02ac56bcb580"
+      }
+    ],
     "appleImg": [
       {
         "__uuid__": "1e434349-a2ea-4be8-9a09-6f67f90d3996"
@@ -6225,6 +6284,9 @@
         "__uuid__": "14fb9c92-21d4-45bf-ad0d-52665adc8b5d"
       }
     ],
+    "badAppleImg": {
+      "__uuid__": "74db5144-4d00-46f2-a207-b26c662245c7"
+    },
     "monkeyImg": [
       {
         "__uuid__": "617cd0a4-004d-45c3-bc76-1bd467713b75"
@@ -6232,62 +6294,6 @@
       {
         "__uuid__": "64da4ff7-9910-4091-bf17-d41963965893"
       }
-    ],
-    "gainScore": {
-      "__id__": 14
-    },
-    "pauseButton": {
-      "__id__": 58
-    },
-    "playerNode": {
-      "__id__": 42
-    },
-    "leaves": {
-      "__id__": 9
-    },
-    "levelLabel": {
-      "__id__": 13
-    },
-    "nodeScoreBoard": {
-      "__id__": 11
-    },
-    "nodePauseInterface": {
-      "__id__": 104
-    },
-    "ndDefeatInterface": {
-      "__id__": 121
-    },
-    "bgm": {
-      "__uuid__": "7a8f2296-7c2c-4cbf-9467-4bf4c17cbd9a"
-    },
-    "buttonClickAudio": {
-      "__uuid__": "5f75835d-fe58-4d26-84ea-bc33e8eb68e4"
-    },
-    "nodeAudioButton": {
-      "__id__": 47
-    },
-    "audioImg": [
-      {
-        "__uuid__": "378467e3-77c0-447a-9efe-d2d269d03062"
-      },
-      {
-        "__uuid__": "acf62b16-2c2d-45f9-99f4-02ac56bcb580"
-      }
-    ],
-    "ndHealthPoint": {
-      "__id__": 51
-    },
-    "failedAudio": {
-      "__uuid__": "1a0c0b39-648a-4264-85dd-33b0dd8f5af4"
-    },
-    "nodeShadow": {
-      "__id__": 101
-    },
-    "appleNode": {
-      "__id__": 152
-    },
-    "targetBoard": {
-      "__id__": 64
-    }
+    ]
   }
 ]

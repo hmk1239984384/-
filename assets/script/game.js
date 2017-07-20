@@ -4,26 +4,27 @@ cc.Class({
 
     properties: {
         monkey: cc.Node, // 猴子节点
-        applePrefab: cc.Prefab,  // 苹果预设
-        appleImg: [cc.SpriteFrame],  // 3种苹果图片
-        monkeyImg: [cc.SpriteFrame],  // 猴子图片,抓手和放手
         gainScore: cc.Node,   // 苹果记分板
         pauseButton: cc.Node,   // 暂停按钮
         playerNode: cc.Node,   // 人物节点
         leaves: cc.Node, // 树叶遮罩
-        levelLabel: cc.Label, // 木版上的字
         nodeScoreBoard: cc.Node, // 记分板节点组
         nodePauseInterface: cc.Node, // 暂停界面节点
         ndDefeatInterface: cc.Node,  // 失败界面节点
-        bgm: cc.AudioClip, // 背景音乐
-        buttonClickAudio: cc.AudioClip,  // 按钮点击音效
         nodeAudioButton: cc.Node,  // 控制静音按钮
-        audioImg: [cc.SpriteFrame],  // 静音按钮图片，1 为静音图片
         ndHealthPoint: cc.Node,  // 生命值节点组
-        failedAudio: cc.AudioClip, // 失败音效
         nodeShadow: cc.Node, // 阴影节点
         appleNode: cc.Node,  // 存储苹果节点
         targetBoard: cc.Node,  // 目标木牌
+        levelLabel: cc.Label, // 木版上的字
+        bgm: cc.AudioClip, // 背景音乐
+        buttonClickAudio: cc.AudioClip,  // 按钮点击音效
+        failedAudio: cc.AudioClip, // 失败音效
+        applePrefab: cc.Prefab,  // 苹果预设
+        audioImg: [cc.SpriteFrame],  // 静音按钮图片，1 为静音图片
+        appleImg: [cc.SpriteFrame],  // 3种苹果图片
+        badAppleImg: cc.SpriteFrame,  // 坏苹果图
+        monkeyImg: [cc.SpriteFrame],  // 猴子图片,抓手和放手
     },
 
     // use this for initialization
@@ -49,6 +50,7 @@ cc.Class({
         this.levelNum = window.levelNum || 1; // 获取关卡数
         this.levelLabel.string = "第 " + this.levelNum + " 关"; // 更改记分板上关卡显示
         this.appleTypeNum = level[this.levelNum - 1].appleTypeNum;// 苹果种类数量
+        this.badApple = level[this.levelNum - 1].badApple;  // 获取是否需要生成坏苹果
         // 获取关卡中各种苹果需要的数量
         this.redAppleMaxNum = level[this.levelNum - 1].redAppleMaxNum;
         this.yellowAppleMaxNum = level[this.levelNum - 1].yellowAppleMaxNum;
@@ -69,7 +71,7 @@ cc.Class({
         this.pauseButtonAction(); // 暂停按钮动画
         this.lastMonkeyPosition = null; // 与苹果同时下来时，猴子的位置
         this.schedule(this.dropApple, 3); // 循环掉落苹果
-        this.healthPoint = 3; // 初始化生命值
+        window.healthPoint = 3; // 初始化生命值
         this.healthPointAction(); // 播放生命值动画
     },
 
@@ -80,7 +82,7 @@ cc.Class({
     },
 
     // start game
-    startGame:function(){
+    startGame: function () {
         this.targetBoard.active = false;
         this.loadGame();
     },
@@ -152,8 +154,18 @@ cc.Class({
 
     // 猴子和苹果掉落动画
     dropApple: function () {
+        var randomNum = cc.random0To1();
         this.monkeyAction();
-        this.appleAction();
+        if (this.badApple == 1) { // 当关卡数据中，需要产生坏苹果时
+            // 设置出现坏苹果的概率
+            if (randomNum > 0.8) {
+                this.appleAction("badApple");
+            } else {
+                this.appleAction("goodApple");
+            }
+        } else if (this.badApple == 0) {
+            this.appleAction("goodApple");
+        }
     },
 
     monkeyAction: function () {
@@ -174,32 +186,37 @@ cc.Class({
         }, 2.8);
     },
 
-    appleAction: function () {
+    appleAction: function (a) {
         // 根据关卡数据中的 typenum 来判断需要产生几种苹果
         var appleType = Math.ceil(cc.random0To1() * this.appleTypeNum);
         var apple = cc.instantiate(this.applePrefab);
         var appleSprite = apple.getComponent(cc.Sprite);
-        switch (appleType) {
-            case 1:
-                apple.name = "redApple";
-                appleSprite.spriteFrame = this.appleImg[0];
-                break;
-            case 2:
-                apple.name = "yellowApple";
-                appleSprite.spriteFrame = this.appleImg[1];
-                break;
-            case 3:
-                apple.name = "greenApple";
-                appleSprite.spriteFrame = this.appleImg[2];
-                break;
-            case 4:
-                apple.name = "peach";
-                appleSprite.spriteFrame = this.appleImg[3];
-                break;
-            case 5:
-                apple.name = "pear";
-                appleSprite.spriteFrame = this.appleImg[4];
-                break;
+        if (a == "goodApple") {
+            switch (appleType) {
+                case 1:
+                    apple.name = "redApple";
+                    appleSprite.spriteFrame = this.appleImg[0];
+                    break;
+                case 2:
+                    apple.name = "yellowApple";
+                    appleSprite.spriteFrame = this.appleImg[1];
+                    break;
+                case 3:
+                    apple.name = "greenApple";
+                    appleSprite.spriteFrame = this.appleImg[2];
+                    break;
+                case 4:
+                    apple.name = "peach";
+                    appleSprite.spriteFrame = this.appleImg[3];
+                    break;
+                case 5:
+                    apple.name = "pear";
+                    appleSprite.spriteFrame = this.appleImg[4];
+                    break;
+            }
+        } else if (a == "badApple") {
+            apple.name = "badApple";
+            appleSprite.spriteFrame = this.badAppleImg;
         }
         this.appleNode.addChild(apple);
         apple.setPosition(this.lastMonkeyPosition.x + 20, this.lastMonkeyPosition.y - 90);
@@ -220,32 +237,36 @@ cc.Class({
         var dropApple3 = this.appleNode.getChildByName("greenApple");
         var dropApple4 = this.appleNode.getChildByName("peach");
         var dropApple5 = this.appleNode.getChildByName("pear");
-        if (dropApple1 && dropApple1.y < - this.gameHeight / 2 - dropApple1.height / 2 && this.healthPoint > 0) {
+        var badApple = this.appleNode.getChildByName("badApple");
+        if (dropApple1 && dropApple1.y < - this.gameHeight / 2 - dropApple1.height / 2 && window.healthPoint > 0) {
             dropApple1.destroy();
-            this.healthPoint--;
-            this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
+            window.healthPoint--;
+            this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
         }
-        if (dropApple2 && dropApple2.y < - this.gameHeight / 2 - dropApple2.height / 2 && this.healthPoint > 0) {
+        if (dropApple2 && dropApple2.y < - this.gameHeight / 2 - dropApple2.height / 2 && window.healthPoint > 0) {
             dropApple2.destroy();
-            this.healthPoint--;
-            this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
+            window.healthPoint--;
+            this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
         }
-        if (dropApple3 && dropApple3.y < - this.gameHeight / 2 - dropApple3.height / 2 && this.healthPoint > 0) {
+        if (dropApple3 && dropApple3.y < - this.gameHeight / 2 - dropApple3.height / 2 && window.healthPoint > 0) {
             dropApple3.destroy();
-            this.healthPoint--;
-            this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
+            window.healthPoint--;
+            this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
         }
-        if (dropApple4 && dropApple4.y < - this.gameHeight / 2 - dropApple4.height / 2 && this.healthPoint > 0) {
+        if (dropApple4 && dropApple4.y < - this.gameHeight / 2 - dropApple4.height / 2 && window.healthPoint > 0) {
             dropApple4.destroy();
-            this.healthPoint--;
-            this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
+            window.healthPoint--;
+            this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
         }
-        if (dropApple5 && dropApple5.y < - this.gameHeight / 2 - dropApple5.height / 2 && this.healthPoint > 0) {
+        if (dropApple5 && dropApple5.y < - this.gameHeight / 2 - dropApple5.height / 2 && window.healthPoint > 0) {
             dropApple5.destroy();
-            this.healthPoint--;
-            this.ndHealthPointChildren[this.healthPoint].runAction(cc.fadeOut(0.2));
+            window.healthPoint--;
+            this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
         }
-        if (this.healthPoint <= 0) {
+        if (badApple && badApple.y < - this.gameHeight / 2 - badApple.height / 2 && window.healthPoint > 0) {
+            badApple.destroy();
+        }
+        if (window.healthPoint <= 0) {
             this.gameOver();
         }
     },
@@ -295,6 +316,7 @@ cc.Class({
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
         window.levelNum = this.levelNum;  // 将关卡数恢复成当前关
+        window.healthPoint = 3; // 重置生命值
         cc.director.resume();
         cc.director.loadScene("game");
     },

@@ -4,19 +4,22 @@ cc.Class({
     properties: {
         loadingNode: cc.Node, // loading Node
         btPlay: cc.Node,
-        noHelpFace: cc.Node,
+        btHelp: cc.Node,
+        btHome: cc.Node,
+        noHelpFace: cc.Node,  // 帮助界面节点组
         phoneImg: cc.Node,  // 摇晃手机动画节点
-        buttonClickAudio: cc.AudioClip,
         nodeAudioButton: cc.Node,  // 控制静音按钮
-        audioImg: [cc.SpriteFrame],  // 静音按钮图片，1 为静音图片
-        startBgm: cc.AudioClip,  // 开始界面背景音乐
         choosePlayer: cc.Node,  // 选择角色节点组
         loadingShadow: cc.Node,  // loading 界面遮罩
-        chooseBackground: [cc.SpriteFrame],  // 两种选择图片
         playerList: [cc.Node],  // 角色列表
         player: cc.Node,  // 使用中的角色
-        playerImg: [cc.SpriteFrame],  // 角色图片
         settingButtonNode: cc.Node,  // 设置按钮节点组
+        chooseBackground: [cc.SpriteFrame],  // 两种选择图片
+        playerImg: [cc.SpriteFrame],  // 角色图片
+        audioImg: [cc.SpriteFrame],  // 静音按钮图片，1 为静音图片
+        buttonClickAudio: cc.AudioClip,
+        startBgm: cc.AudioClip,  // 开始界面背景音乐
+        touchAnim: cc.Prefab,  // 点击动画
     },
 
     // use this for initialization
@@ -58,7 +61,7 @@ cc.Class({
         var action8 = cc.scaleTo(1, 0.8);
         var action9 = cc.scaleTo(1, 1.2);
         this.touchAciton = cc.repeatForever(cc.sequence(action8, action9));
-        // 初始化操作方式        
+        // 初始化操作方式
         this.controlMethod = window.controlMethod || "devicemotion";
         this.settingChildren = this.settingButtonNode.children; // 获取设置按钮子节点
         if (this.controlMethod == "devicemotion") {
@@ -69,6 +72,11 @@ cc.Class({
             this.settingChildren[1].runAction(this.touchAciton);
         }
         window.controlMethod = this.controlMethod;
+        this.node.on(cc.Node.EventType.TOUCH_START, this.touchEffect, this);
+    },
+
+    onDestroy: function () {
+        this.node.off(cc.Node.EventType.TOUCH_START, this.touchEffect, this);
     },
 
     // 获取按钮数据
@@ -152,6 +160,12 @@ cc.Class({
 
     // 进入切换角色界面按钮
     playerButtonClick: function () {
+        this.nodeAudioButton.getComponent(cc.Button).interactable = false;
+        this.btPlay.getComponent(cc.Button).interactable = false;
+        this.btHelp.getComponent(cc.Button).interactable = false;
+        this.btHome.getComponent(cc.Button).interactable = false;
+        this.player.getComponent(cc.Button).interactable = false;
+        this.settingButtonNode.getComponent(cc.Button).interactable = false;
         this.choosePlayer.active = true;
         if (this.selectedPlayer == 1) {
             this.playerList[0].children[3].active = true;
@@ -169,6 +183,12 @@ cc.Class({
     // 关闭按钮
     closeButtonClick: function () {
         this.choosePlayer.active = false;
+        this.nodeAudioButton.getComponent(cc.Button).interactable = true;
+        this.btPlay.getComponent(cc.Button).interactable = true;
+        this.btHome.getComponent(cc.Button).interactable = true;
+        this.btHelp.getComponent(cc.Button).interactable = true;
+        this.player.getComponent(cc.Button).interactable = true;
+        this.settingButtonNode.getComponent(cc.Button).interactable = true;
     },
 
     // 选择角色按钮
@@ -212,6 +232,22 @@ cc.Class({
             this.settingChildren[0].stopAction(this.devicemotionAction);
             this.settingChildren[1].runAction(this.touchAciton);
         }
+    },
+
+    // 点击特效
+    touchEffect: function (event) {
+        var touchPosition = event.getLocation();
+        var touchP = cc.p(touchPosition.x - cc.winSize.width / 2, touchPosition.y - cc.winSize.height / 2);
+        var anim = cc.instantiate(this.touchAnim);
+        this.node.addChild(anim);
+        anim.position = touchP;
+        var animation = anim.getComponent(cc.Animation);
+        animation.play();
+        this.scheduleOnce(function () {
+            var child = this.node.getChildByName("touchAnim");
+            this.node.removeChild(child);
+        }, 0.3);
+
     },
 
     // called every frame, uncomment this function to activate update callback

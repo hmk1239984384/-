@@ -2,11 +2,11 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+        nodeAudioButton: cc.Node,   // 音量按钮
+        numButton: [cc.Node],  // 各关卡节点
         buttonClickAudio: cc.AudioClip,  // 按钮音效
         bgm: cc.AudioClip,
         audioImg: [cc.SpriteFrame], // 静音按钮图片，1 为静音图片
-        nodeAudioButton: cc.Node,   // 音量按钮
-        numButton: [cc.Node],  // 各关卡节点
         starImg: [cc.SpriteFrame],  // 星星图片, 0 为空心，1 为实心
     },
 
