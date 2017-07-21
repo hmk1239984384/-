@@ -251,6 +251,8 @@ cc.Class({
             water.getComponent(cc.Sprite).spriteFrame = this.waterImg[1];
             this.scheduleOnce(function () {
                 water.getComponent(cc.Sprite).spriteFrame = this.waterImg[2];
+                var action = cc.fadeTo(7, 0);
+                water.runAction(cc.sequence(action,cc.removeSelf()));
             }, 0.2);
         }, 3.5);
     },

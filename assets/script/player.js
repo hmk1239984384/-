@@ -63,7 +63,7 @@ cc.Class({
         this.pearMaxNum = level[this.levelNum - 1].pearMaxNum;
         // 获取每种苹果的节点组
         this.scoreChildren = this.gainScore.children;
-        this. ndHealthPointChildren = this.ndHealthPoint.children;
+        this.ndHealthPointChildren = this.ndHealthPoint.children;
     },
 
     onDestroy: function () {
@@ -150,26 +150,39 @@ cc.Class({
 
     // 碰撞时
     onCollisionEnter: function (other, self) {
-        if (other.node.name == "redApple") {
-            this.redAppleCount += 1;
-        } else if (other.node.name == "yellowApple") {
-            this.yellowAppleCount += 1;
-        } else if (other.node.name == "greenApple") {
-            this.greenAppleCount += 1;
-        } else if (other.node.name == "peach") {
-            this.peachCount += 1;
-        } else if (other.node.name == "pear") {
-            this.pearCount += 1;
-        } else if (other.node.name == "badApple") {
-            window.healthPoint--;
-            this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
+        if (other.node.name == "water") {  // 遇水加速效果
+            this._time += 600;
+            this._time = cc.clampf(this._time, 0, 5000);
+        } else {
+            if (other.node.name == "redApple") {
+                this.redAppleCount += 1;
+            } else if (other.node.name == "yellowApple") {
+                this.yellowAppleCount += 1;
+            } else if (other.node.name == "greenApple") {
+                this.greenAppleCount += 1;
+            } else if (other.node.name == "peach") {
+                this.peachCount += 1;
+            } else if (other.node.name == "pear") {
+                this.pearCount += 1;
+            } else if (other.node.name == "badApple") {
+                window.healthPoint--;
+                this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
+            }
+            other.node.destroy();
+            if (window.isMuted === false) {
+                cc.audioEngine.play(this.getAppleAudio, false, 0.8);
+            }
+            this.recordScore();
+            this.passBarrier();
         }
-        other.node.destroy();
-        if (window.isMuted === false) {
-            cc.audioEngine.play(this.getAppleAudio, false, 0.8);
+    },
+
+    // 碰撞结束时
+    onCollisionExit: function (other, self) {
+        if (other.node.name == "water") {  // 离开水滴区域
+            this._time -= 200;
+            this._time = cc.clampf(this._time, 0, 3000);
         }
-        this.recordScore();
-        this.passBarrier();
     },
 
     // 记录分数
