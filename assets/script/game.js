@@ -4,35 +4,36 @@ cc.Class({
 
     properties: {
         monkey: cc.Node, // 猴子节点
-        gainScore: cc.Node,   // 苹果记分板
-        pauseButton: cc.Node,   // 暂停按钮
-        playerNode: cc.Node,   // 人物节点
+        gainScore: cc.Node, // 苹果记分板
+        pauseButton: cc.Node, // 暂停按钮
+        playerNode: cc.Node, // 人物节点
         leaves: cc.Node, // 树叶遮罩
         nodeScoreBoard: cc.Node, // 记分板节点组
         nodePauseInterface: cc.Node, // 暂停界面节点
-        ndDefeatInterface: cc.Node,  // 失败界面节点
-        nodeAudioButton: cc.Node,  // 控制静音按钮
-        ndHealthPoint: cc.Node,  // 生命值节点组
+        ndDefeatInterface: cc.Node, // 失败界面节点
+        nodeAudioButton: cc.Node, // 控制静音按钮
+        ndHealthPoint: cc.Node, // 生命值节点组
         nodeShadow: cc.Node, // 阴影节点
-        appleNode: cc.Node,  // 存储苹果节点
-        targetBoard: cc.Node,  // 目标木牌
+        appleNode: cc.Node, // 存储苹果节点
+        targetBoard: cc.Node, // 目标木牌
+        water: cc.Node, // 水的节点
         levelLabel: cc.Label, // 木版上的字
         bgm: cc.AudioClip, // 背景音乐
-        buttonClickAudio: cc.AudioClip,  // 按钮点击音效
+        buttonClickAudio: cc.AudioClip, // 按钮点击音效
         failedAudio: cc.AudioClip, // 失败音效
-        applePrefab: cc.Prefab,  // 苹果预设
-        audioImg: [cc.SpriteFrame],  // 静音按钮图片，1 为静音图片
-        appleImg: [cc.SpriteFrame],  // 3种苹果图片
-        badAppleImg: cc.SpriteFrame,  // 坏苹果图
-        monkeyImg: [cc.SpriteFrame],  // 猴子图片,抓手和放手
+        applePrefab: cc.Prefab, // 苹果预设
+        audioImg: [cc.SpriteFrame], // 静音按钮图片，1 为静音图片
+        appleImg: [cc.SpriteFrame], // 3种苹果图片
+        badAppleImg: cc.SpriteFrame, // 坏苹果图
+        monkeyImg: [cc.SpriteFrame], // 猴子图片,抓手和放手
     },
 
     // use this for initialization
     onLoad: function () {
-        if (cc.director.isPaused()) {  // 防止游戏加载时被暂停
+        if (cc.director.isPaused()) { // 防止游戏加载时被暂停
             cc.director.resume();
         }
-        this.audioSprite = this.nodeAudioButton.getComponent(cc.Sprite);  // 获取静音按钮 Sprite 组件
+        this.audioSprite = this.nodeAudioButton.getComponent(cc.Sprite); // 获取静音按钮 Sprite 组件
         if (window.isMuted == undefined) {
             window.isMuted = false;
             this.audioSprite.spriteFrame = this.audioImg[0];
@@ -49,24 +50,24 @@ cc.Class({
         this.leaves.zIndex = 2; // 将树叶遮罩放在猴子上层
         this.levelNum = window.levelNum || 1; // 获取关卡数
         this.levelLabel.string = "第 " + this.levelNum + " 关"; // 更改记分板上关卡显示
-        this.appleTypeNum = level[this.levelNum - 1].appleTypeNum;// 苹果种类数量
-        this.badApple = level[this.levelNum - 1].badApple;  // 获取是否需要生成坏苹果
+        this.appleTypeNum = level[this.levelNum - 1].appleTypeNum; // 苹果种类数量
+        this.badApple = level[this.levelNum - 1].badApple; // 获取是否需要生成坏苹果
         // 获取关卡中各种苹果需要的数量
         this.redAppleMaxNum = level[this.levelNum - 1].redAppleMaxNum;
         this.yellowAppleMaxNum = level[this.levelNum - 1].yellowAppleMaxNum;
         this.greenAppleMaxNum = level[this.levelNum - 1].greenAppleMaxNum;
         this.peachMaxNum = level[this.levelNum - 1].peachMaxNum;
         this.pearMaxNum = level[this.levelNum - 1].pearMaxNum;
-        this.ndHealthPointChildren = this.ndHealthPoint.children;  // 获取生命值子节点
-        this.starNum = [];  // 初始化分数
+        this.ndHealthPointChildren = this.ndHealthPoint.children; // 获取生命值子节点
+        this.starNum = []; // 初始化分数
         this.starNum.length = level.length;
         this.starNum = JSON.parse(cc.sys.localStorage.getItem("starNum")) || [];
-        this.showTarget();  // 显示当前关卡目标
+        this.showTarget(); // 显示当前关卡目标
     },
 
     // 开始游戏初始化
     loadGame: function () {
-        this.changeAppleNum("gainScore");// 根据数据动态调节记分板上需要的目标苹果数量
+        this.changeAppleNum("gainScore"); // 根据数据动态调节记分板上需要的目标苹果数量
         this.scoreboardDownAction(); // 记分板动画
         this.pauseButtonAction(); // 暂停按钮动画
         this.lastMonkeyPosition = null; // 与苹果同时下来时，猴子的位置
@@ -166,8 +167,12 @@ cc.Class({
         } else if (this.badApple == 0) {
             this.appleAction("goodApple");
         }
+        if (cc.random0To1() > 0.8 && this.levelNum > 2) { // 第三关开始有几率掉落水珠
+            this.dropWater();
+        }
     },
 
+    // 猴子掉落动画
     monkeyAction: function () {
         var monkey = cc.instantiate(this.monkey);
         this.node.addChild(monkey, 1);
@@ -186,6 +191,7 @@ cc.Class({
         }, 2.8);
     },
 
+    // 苹果出现动画
     appleAction: function (a) {
         // 根据关卡数据中的 typenum 来判断需要产生几种苹果
         var appleType = Math.ceil(cc.random0To1() * this.appleTypeNum);
@@ -228,6 +234,17 @@ cc.Class({
         var action = cc.sequence(down, wait, downAndRotate);
         apple.runAction(action);
     },
+
+    // 水珠掉落
+    dropWater: function () {
+        var water = cc.instantiate(this.water);
+        var waterPositionX = cc.random0To1() * (cc.winSize.width - this.water.width * this.water.getScale() / 2) - cc.winSize.width / 2;
+        this.node.addChild(water);
+        water.position = cc.p(waterPositionX, 200);
+        var action = cc.moveBy(2, cc.p(0, -420));
+        water.runAction(action);
+    },
+
 
     // called every frame, uncomment this function to activate update callback
     update: function (dt) {
@@ -315,7 +332,7 @@ cc.Class({
         if (window.isMuted === false) {
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
-        window.levelNum = this.levelNum;  // 将关卡数恢复成当前关
+        window.levelNum = this.levelNum; // 将关卡数恢复成当前关
         window.healthPoint = 3; // 重置生命值
         cc.director.resume();
         cc.director.loadScene("game");
@@ -326,7 +343,7 @@ cc.Class({
         if (window.isMuted === false) {
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
-        if (customEventData == "next") {  // 当出现的是过关界面时，点击菜单也能记分
+        if (customEventData == "next") { // 当出现的是过关界面时，点击菜单也能记分
             this.getStar();
         }
         cc.director.resume();
@@ -373,10 +390,10 @@ cc.Class({
 
     // 记分方法
     getStar: function () {
-        if (this.starNum[this.levelNum - 1] == undefined) {  // 不存在最高分时，记分
+        if (this.starNum[this.levelNum - 1] == undefined) { // 不存在最高分时，记分
             this.starNum[this.levelNum - 1] = this.healthPoint;
             cc.sys.localStorage.setItem("starNum", JSON.stringify(this.starNum));
-        } else if (this.starNum[this.levelNum - 1] && this.healthPoint > this.starNum[this.levelNum - 1]) {  // 最高分低于当前分时，记分
+        } else if (this.starNum[this.levelNum - 1] && this.healthPoint > this.starNum[this.levelNum - 1]) { // 最高分低于当前分时，记分
             this.starNum[this.levelNum - 1] = this.healthPoint;
             cc.sys.localStorage.setItem("starNum", JSON.stringify(this.starNum));
         }
