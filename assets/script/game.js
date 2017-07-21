@@ -16,16 +16,18 @@ cc.Class({
         nodeShadow: cc.Node, // 阴影节点
         appleNode: cc.Node, // 存储苹果节点
         targetBoard: cc.Node, // 目标木牌
-        water: cc.Node, // 水的节点
+        waterNode: cc.Node,  // 空的 water 节点
         levelLabel: cc.Label, // 木版上的字
         bgm: cc.AudioClip, // 背景音乐
         buttonClickAudio: cc.AudioClip, // 按钮点击音效
         failedAudio: cc.AudioClip, // 失败音效
         applePrefab: cc.Prefab, // 苹果预设
+        waterPrefab: cc.Prefab, // 水的预设
         audioImg: [cc.SpriteFrame], // 静音按钮图片，1 为静音图片
         appleImg: [cc.SpriteFrame], // 3种苹果图片
         badAppleImg: cc.SpriteFrame, // 坏苹果图
         monkeyImg: [cc.SpriteFrame], // 猴子图片,抓手和放手
+        waterImg: [cc.SpriteFrame],  // 1 为原始图
     },
 
     // use this for initialization
@@ -237,12 +239,20 @@ cc.Class({
 
     // 水珠掉落
     dropWater: function () {
-        var water = cc.instantiate(this.water);
-        var waterPositionX = cc.random0To1() * (cc.winSize.width - this.water.width * this.water.getScale() / 2) - cc.winSize.width / 2;
-        this.node.addChild(water);
+        var water = cc.instantiate(this.waterPrefab);
+        var waterPositionX = cc.random0To1() * (cc.winSize.width - water.width * water.getScale() / 2) - cc.winSize.width / 2;
+        this.waterNode.addChild(water);
         water.position = cc.p(waterPositionX, 200);
+        water.getComponent(cc.Sprite).spriteFrame = this.waterImg[0];
         var action = cc.moveBy(2, cc.p(0, -420));
-        water.runAction(action);
+        water.runAction(cc.sequence(cc.moveBy(1.5, 0, 0), action));
+        // if(water.position.y < -219)
+        this.scheduleOnce(function () {
+            water.getComponent(cc.Sprite).spriteFrame = this.waterImg[1];
+            this.scheduleOnce(function () {
+                water.getComponent(cc.Sprite).spriteFrame = this.waterImg[2];
+            }, 0.2);
+        }, 3.5);
     },
 
 
