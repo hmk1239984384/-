@@ -161,7 +161,7 @@ cc.Class({
         this.monkeyAction();
         if (this.badApple == 1) { // 当关卡数据中，需要产生坏苹果时
             // 设置出现坏苹果的概率
-            if (randomNum > 0.8) {
+            if (randomNum > 0.85) {
                 this.appleAction("badApple");
             } else {
                 this.appleAction("goodApple");
@@ -403,10 +403,10 @@ cc.Class({
     // 记分方法
     getStar: function () {
         if (this.starNum[this.levelNum - 1] == undefined) { // 不存在最高分时，记分
-            this.starNum[this.levelNum - 1] = this.healthPoint;
+            this.starNum[this.levelNum - 1] = window.healthPoint;
             cc.sys.localStorage.setItem("starNum", JSON.stringify(this.starNum));
-        } else if (this.starNum[this.levelNum - 1] && this.healthPoint > this.starNum[this.levelNum - 1]) { // 最高分低于当前分时，记分
-            this.starNum[this.levelNum - 1] = this.healthPoint;
+        } else if (this.starNum[this.levelNum - 1] && window.healthPoint > this.starNum[this.levelNum - 1]) { // 最高分低于当前分时，记分
+            this.starNum[this.levelNum - 1] = window.healthPoint;
             cc.sys.localStorage.setItem("starNum", JSON.stringify(this.starNum));
         }
     },
