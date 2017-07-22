@@ -261,7 +261,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1920,
+      "width": 2272,
       "height": 640
     },
     "_rotationX": 0,
@@ -270,7 +270,7 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 392,
+      "x": 570,
       "y": 0
     },
     "_skewX": 0,
@@ -335,7 +335,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 1920,
+      "width": 2272,
       "height": 640
     },
     "_rotationX": 0,
@@ -409,8 +409,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": -624,
-      "y": 153
+      "x": -811,
+      "y": 221
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -797,8 +797,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": -368,
-      "y": 83
+      "x": -507,
+      "y": 3
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -1185,8 +1185,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": -245,
-      "y": -129
+      "x": -369,
+      "y": -244
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -1573,8 +1573,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 30,
-      "y": -186
+      "x": 32,
+      "y": -45
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -1961,8 +1961,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 193,
-      "y": 95
+      "x": 372,
+      "y": -105
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -2349,8 +2349,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 523,
-      "y": 178
+      "x": 648,
+      "y": -69
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -2727,7 +2727,7 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": -846,
+      "x": -1032,
       "y": 0
     },
     "_skewX": 0,
@@ -2835,7 +2835,7 @@
     },
     "_enabled": true,
     "_spriteFrame": {
-      "__uuid__": "2da919aa-f072-42d6-9b3f-22b5f673f753"
+      "__uuid__": "5daa7574-2829-438d-86e8-1a9ff054f9c4"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -2862,7 +2862,7 @@
     "_enabled": true,
     "_layoutSize": {
       "__type__": "cc.Size",
-      "width": 1920,
+      "width": 2272,
       "height": 640
     },
     "_resize": 0,

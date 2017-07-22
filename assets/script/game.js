@@ -88,11 +88,17 @@ cc.Class({
     // 显示目标
     showTarget: function () {
         this.targetBoard.active = true;
+        if(this.levelNum > 2){
+            this.targetBoard.children[5].active = true;  // 提示节点
+        }
         this.changeAppleNum("targetFirst");
     },
 
     // start game
     startGame: function () {
+        if(this.levelNum >= 3){
+            this.targetBoard.children[5].active = false;
+        }
         this.targetBoard.active = false;
         this.loadGame();
     },
@@ -152,8 +158,8 @@ cc.Class({
 
     // 记分板下落动画
     scoreboardDownAction: function () {
-        var action = cc.moveBy(1.2, cc.p(0, -230)).easing(cc.easeElasticOut(3));
-        var action1 = cc.moveBy(0.8, cc.p(0, 40)).easing(cc.easeElasticIn());
+        var action = cc.moveBy(1.2, cc.p(0, -100)).easing(cc.easeElasticOut(3));
+        var action1 = cc.moveBy(0.8, cc.p(0, 20)).easing(cc.easeElasticIn());
         var action2 = cc.sequence(action, action1);
         this.nodeScoreBoard.runAction(action);
     },
@@ -249,7 +255,7 @@ cc.Class({
         apple.runAction(action);
     },
 
-    // 水珠掉落
+    // 水珠掉落，第三关开始有几率掉落
     dropWater: function () {
         var water = cc.instantiate(this.waterPrefab);
         var waterPositionX = cc.random0To1() * (cc.winSize.width - water.width * water.getScale() / 2) - cc.winSize.width / 2;

@@ -1,14 +1,14 @@
 {
   "ver": "1.0.0",
-  "uuid": "4c8299f8-c8b0-4548-9d41-01279f623d2e",
+  "uuid": "75fd3a14-f4bb-4e5f-897f-1c82e4c000e9",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
   "subMetas": {
-    "shibai": {
+    "mubiao": {
       "ver": "1.0.3",
-      "uuid": "0d2c4bb6-767e-45ab-b782-9a15f268b88a",
-      "rawTextureUuid": "4c8299f8-c8b0-4548-9d41-01279f623d2e",
+      "uuid": "c1b90a68-263d-4b7f-a4e5-66a5e54bd696",
+      "rawTextureUuid": "75fd3a14-f4bb-4e5f-897f-1c82e4c000e9",
       "trimType": "auto",
       "trimThreshold": 1,
       "rotated": false,

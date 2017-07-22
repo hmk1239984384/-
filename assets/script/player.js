@@ -126,7 +126,7 @@ cc.Class({
     // called every frame, uncomment this function to activate update callback
     update: function (dt) {
         var player = this.player, range = this._rangeX;
-        this._time += 2;
+        this._time += 1;
         this.playerMove = this._acc.x * dt * (this.speed + this._time);
         player.x += this.playerMove;
         if (this.playerMove > 0) {
