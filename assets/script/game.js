@@ -21,11 +21,12 @@ cc.Class({
         bgm: cc.AudioClip, // 背景音乐
         buttonClickAudio: cc.AudioClip, // 按钮点击音效
         failedAudio: cc.AudioClip, // 失败音效
+        lossBloodAudio: cc.AudioClip,  // 掉血音效
         applePrefab: cc.Prefab, // 苹果预设
         waterPrefab: cc.Prefab, // 水的预设
         audioImg: [cc.SpriteFrame], // 静音按钮图片，1 为静音图片
         appleImg: [cc.SpriteFrame], // 3种苹果图片
-        badAppleImg: cc.SpriteFrame, // 坏苹果图
+        badAppleImg: [cc.SpriteFrame], // 坏苹果图
         monkeyImg: [cc.SpriteFrame], // 猴子图片,抓手和放手
         waterImg: [cc.SpriteFrame],  // 1 为原始图
     },
@@ -65,6 +66,8 @@ cc.Class({
         this.starNum.length = level.length;
         this.starNum = JSON.parse(cc.sys.localStorage.getItem("starNum")) || [];
         this.showTarget(); // 显示当前关卡目标
+        // 判断选择的人物
+        this.selectedPlayer = window.selectedPlayer || 1;
     },
 
     // 开始游戏初始化
@@ -74,7 +77,11 @@ cc.Class({
         this.pauseButtonAction(); // 暂停按钮动画
         this.lastMonkeyPosition = null; // 与苹果同时下来时，猴子的位置
         this.schedule(this.dropApple, 3); // 循环掉落苹果
-        window.healthPoint = 3; // 初始化生命值
+        if (this.selectedPlayer == 1) {
+            window.healthPoint = 3; // 初始化生命值
+        } else if (this.selectedPlayer == 2) {
+            window.healthPoint = 5;
+        }
         this.healthPointAction(); // 播放生命值动画
     },
 
@@ -92,7 +99,7 @@ cc.Class({
 
     // 生命值动画
     healthPointAction: function () {
-        for (var i = 0; i < this.ndHealthPointChildren.length; i++) {
+        for (var i = 0; i < window.healthPoint; i++) {
             this.ndHealthPointChildren[i].active = true;
             this.ndHealthPointChildren[i].runAction(cc.blink(3, 3));
         }
@@ -110,7 +117,11 @@ cc.Class({
         // 设置苹果
         for (var i = 0; i < allAppleNum; i++) {
             scoreChildren[i].active = true;
-            scoreChildren[i].opacity = 70;
+            if (target == "gainScore") {
+                scoreChildren[i].opacity = 70;
+            } else if (target == "targetFirst") {
+                scoreChildren[i].opacity = 255;
+            }
         }
         for (var j = 0; j < this.redAppleMaxNum; j++) {
             var appleSprite = scoreChildren[j].getComponent(cc.Sprite);
@@ -224,7 +235,8 @@ cc.Class({
             }
         } else if (a == "badApple") {
             apple.name = "badApple";
-            appleSprite.spriteFrame = this.badAppleImg;
+            var r = Math.floor(cc.random0To1() * 3);
+            appleSprite.spriteFrame = this.badAppleImg[r];
         }
         this.appleNode.addChild(apple);
         apple.setPosition(this.lastMonkeyPosition.x + 20, this.lastMonkeyPosition.y - 90);
@@ -252,7 +264,7 @@ cc.Class({
             this.scheduleOnce(function () {
                 water.getComponent(cc.Sprite).spriteFrame = this.waterImg[2];
                 var action = cc.fadeTo(7, 0);
-                water.runAction(cc.sequence(action,cc.removeSelf()));
+                water.runAction(cc.sequence(action, cc.removeSelf()));
             }, 0.2);
         }, 3.5);
     },
@@ -271,26 +283,41 @@ cc.Class({
             dropApple1.destroy();
             window.healthPoint--;
             this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
+            if (window.isMuted === false) {
+                cc.audioEngine.play(this.lossBloodAudio, false, 0.8);
+            }
         }
         if (dropApple2 && dropApple2.y < - this.gameHeight / 2 - dropApple2.height / 2 && window.healthPoint > 0) {
             dropApple2.destroy();
             window.healthPoint--;
             this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
+            if (window.isMuted === false) {
+                cc.audioEngine.play(this.lossBloodAudio, false, 0.8);
+            }
         }
         if (dropApple3 && dropApple3.y < - this.gameHeight / 2 - dropApple3.height / 2 && window.healthPoint > 0) {
             dropApple3.destroy();
             window.healthPoint--;
             this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
+            if (window.isMuted === false) {
+                cc.audioEngine.play(this.lossBloodAudio, false, 0.8);
+            }
         }
         if (dropApple4 && dropApple4.y < - this.gameHeight / 2 - dropApple4.height / 2 && window.healthPoint > 0) {
             dropApple4.destroy();
             window.healthPoint--;
             this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
+            if (window.isMuted === false) {
+                cc.audioEngine.play(this.lossBloodAudio, false, 0.8);
+            }
         }
         if (dropApple5 && dropApple5.y < - this.gameHeight / 2 - dropApple5.height / 2 && window.healthPoint > 0) {
             dropApple5.destroy();
             window.healthPoint--;
             this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
+            if (window.isMuted === false) {
+                cc.audioEngine.play(this.lossBloodAudio, false, 0.8);
+            }
         }
         if (badApple && badApple.y < - this.gameHeight / 2 - badApple.height / 2 && window.healthPoint > 0) {
             badApple.destroy();
@@ -345,7 +372,11 @@ cc.Class({
             var btPauseAudio = cc.audioEngine.play(this.buttonClickAudio, false, 1);
         }
         window.levelNum = this.levelNum; // 将关卡数恢复成当前关
-        window.healthPoint = 3; // 重置生命值
+        if (this.selectedPlayer == 1) {
+            window.healthPoint = 3; // 重置生命值
+        } else if (this.selectedPlayer == 2) {
+            window.healthPoint = 5;
+        }
         cc.director.resume();
         cc.director.loadScene("game");
     },
@@ -357,6 +388,11 @@ cc.Class({
         }
         if (customEventData == "next") { // 当出现的是过关界面时，点击菜单也能记分
             this.getStar();
+        }
+        if (this.selectedPlayer == 1) {
+            window.healthPoint = 3; // 重置生命值
+        } else if (this.selectedPlayer == 2) {
+            window.healthPoint = 5;
         }
         cc.director.resume();
         cc.director.loadScene("start");

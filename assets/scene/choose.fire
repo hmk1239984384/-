@@ -66,10 +66,10 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 80
+        "__id__": 81
       },
       {
-        "__id__": 81
+        "__id__": 82
       }
     ],
     "_prefab": null,
@@ -2945,18 +2945,71 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "audio",
+    "_name": "audioButton",
     "_objFlags": 0,
     "_parent": {
       "__id__": 2
+    },
+    "_children": [
+      {
+        "__id__": 77
+      }
+    ],
+    "_tag": -1,
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 79
+      }
+    ],
+    "_prefab": null,
+    "_id": "205edmGNfNEmI18G1Gm2yQA",
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_cascadeOpacityEnabled": true,
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 150,
+      "height": 150
+    },
+    "_rotationX": 0,
+    "_rotationY": 0,
+    "_scaleX": 1,
+    "_scaleY": 1,
+    "_position": {
+      "__type__": "cc.Vec2",
+      "x": 492,
+      "y": 244
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_localZOrder": 0,
+    "_globalZOrder": 0,
+    "_opacityModifyRGB": false,
+    "groupIndex": 0
+  },
+  {
+    "__type__": "cc.Node",
+    "_name": "audio",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 76
     },
     "_children": [],
     "_tag": -1,
     "_active": true,
     "_components": [
-      {
-        "__id__": 77
-      },
       {
         "__id__": 78
       }
@@ -2979,8 +3032,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 129,
-      "height": 153
+      "width": 145,
+      "height": 313
     },
     "_rotationX": 0,
     "_rotationY": 0,
@@ -2988,8 +3041,8 @@
     "_scaleY": 1,
     "_position": {
       "__type__": "cc.Vec2",
-      "x": 470,
-      "y": 222
+      "x": 4,
+      "y": -81
     },
     "_skewX": 0,
     "_skewY": 0,
@@ -3003,7 +3056,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 76
+      "__id__": 77
     },
     "_enabled": true,
     "_spriteFrame": null,
@@ -3051,7 +3104,7 @@
     "hoverSprite": null,
     "clickEvents": [
       {
-        "__id__": 79
+        "__id__": 80
       }
     ],
     "_N$interactable": true,
@@ -3110,7 +3163,7 @@
     },
     "_enabled": true,
     "nodeAudioButton": {
-      "__id__": 76
+      "__id__": 77
     },
     "numButton": [
       {
@@ -3153,7 +3206,6 @@
       {
         "__uuid__": "cdf17dbf-61e3-4bec-b987-62a67b78e142"
       }
-    ],
-    "touchAnim": null
+    ]
   }
 ]

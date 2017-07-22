@@ -16,6 +16,7 @@ cc.Class({
         directorButton: cc.Node, // 存放方向图片节点
         directorButtonImg: [cc.SpriteFrame],  // 方向图片
         ndHealthPoint: cc.Node,  // 生命值节点组
+        lossBloodAudio: cc.AudioClip,  // 掉血音频
     },
 
     // use this for initialization
@@ -167,11 +168,14 @@ cc.Class({
             } else if (other.node.name == "badApple") {
                 window.healthPoint--;
                 this.ndHealthPointChildren[window.healthPoint].runAction(cc.fadeOut(0.2));
+                if (window.isMuted === false) {
+                    cc.audioEngine.play(this.lossBloodAudio, false, 0.8);
+                }
             }
-            other.node.destroy();
-            if (window.isMuted === false) {
+            if (window.isMuted === false && other.node.name != "badApple") {
                 cc.audioEngine.play(this.getAppleAudio, false, 0.8);
             }
+            other.node.destroy();
             this.recordScore();
             this.passBarrier();
         }

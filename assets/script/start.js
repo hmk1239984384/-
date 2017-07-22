@@ -8,6 +8,7 @@ cc.Class({
         btHome: cc.Node,
         noHelpFace: cc.Node,  // 帮助界面节点组
         phoneImg: cc.Node,  // 摇晃手机动画节点
+        nodeAudioSprite: cc.Node,  // 控制静音按钮的图片
         nodeAudioButton: cc.Node,  // 控制静音按钮
         choosePlayer: cc.Node,  // 选择角色节点组
         loadingShadow: cc.Node,  // loading 界面遮罩
@@ -27,7 +28,7 @@ cc.Class({
         if (cc.director.isPaused()) { // 防止游戏加载时被暂停
             cc.director.resume();
         }
-        this.audioSprite = this.nodeAudioButton.getComponent(cc.Sprite);  // 获取静音按钮 Sprite 组件
+        this.audioSprite = this.nodeAudioSprite.getComponent(cc.Sprite);  // 获取静音按钮 Sprite 组件
         if (window.isMuted == undefined) {
             window.isMuted = false;
             this.audioSprite.spriteFrame = this.audioImg[0];
