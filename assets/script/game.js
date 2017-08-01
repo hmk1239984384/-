@@ -88,7 +88,7 @@ cc.Class({
     // 显示目标
     showTarget: function () {
         this.targetBoard.active = true;
-        if(this.levelNum > 2){
+        if (this.levelNum > 2) {
             this.targetBoard.children[5].active = true;  // 提示节点
         }
         this.changeAppleNum("targetFirst");
@@ -96,7 +96,7 @@ cc.Class({
 
     // start game
     startGame: function () {
-        if(this.levelNum >= 3){
+        if (this.levelNum >= 3) {
             this.targetBoard.children[5].active = false;
         }
         this.targetBoard.active = false;
@@ -445,10 +445,18 @@ cc.Class({
     // 记分方法
     getStar: function () {
         if (this.starNum[this.levelNum - 1] == undefined) { // 不存在最高分时，记分
-            this.starNum[this.levelNum - 1] = window.healthPoint;
+            if (window.healthPoint >= 3) {
+                this.starNum[this.levelNum - 1] = 3;
+            } else {
+                this.starNum[this.levelNum - 1] = window.healthPoint;
+            }
             cc.sys.localStorage.setItem("starNum", JSON.stringify(this.starNum));
         } else if (this.starNum[this.levelNum - 1] && window.healthPoint > this.starNum[this.levelNum - 1]) { // 最高分低于当前分时，记分
-            this.starNum[this.levelNum - 1] = window.healthPoint;
+            if (window.healthPoint >= 3) {
+                this.starNum[this.levelNum - 1] = 3;
+            } else {
+                this.starNum[this.levelNum - 1] = window.healthPoint;
+            }
             cc.sys.localStorage.setItem("starNum", JSON.stringify(this.starNum));
         }
     },
